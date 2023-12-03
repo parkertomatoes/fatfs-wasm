@@ -1,0 +1,7 @@
+obj
+node_modules
+.DS_Store
+native/ff15/documents
+ff.wat
+dist
+.vscode
