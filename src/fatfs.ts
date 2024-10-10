@@ -1,5 +1,3 @@
-import fatfsWasm from './ff.wasm';
-
 /* CONSTANTS */
 
 /** Disk I/O control commands (for disk_ioctl) */
@@ -100,6 +98,22 @@ const OFFSET_FATFS_CSIZE = 10;
 
 /* HELPER FUNCTIONS */
 
+async function getWasm(importObject: WebAssembly.Imports) {
+    if (typeof window !== 'undefined') { // Browser
+        const url = import.meta.url 
+        const parentUrl = url.substring( 0, url.lastIndexOf( "/" ) + 1);
+        return await WebAssembly.instantiateStreaming(fetch(`${parentUrl}/ff.wasm`), importObject);
+    }
+
+    // NodeJS: use ESM syntax and let rollup convert to CommonJS
+    const { readFile } = await import('node:fs/promises');
+    const { join, dirname } = await import('node:path');
+    const { fileURLToPath } = await import('node:url');
+    const filePath = fileURLToPath(import.meta.url);
+    const wasmPath = join(dirname(filePath), 'ff.wasm');
+    const wasmData = await readFile(wasmPath);
+    return await WebAssembly.instantiate(wasmData, importObject);
+}    
 
 function throwIfError(actionName: string, action: () => FatFsResult, onError?: () => void) {
     const result = action();
@@ -684,12 +698,7 @@ export class FatFsDisk {
         const heap = new Uint8Array(memory.buffer);
         const view = new DataView(memory.buffer);
         const importObject = createImportObject(memory, heap, view, disk, sectorSize);
-        const source = (typeof window !== 'undefined')
-            ? await WebAssembly.instantiateStreaming(fetch(fatfsWasm), importObject)
-            : await WebAssembly.instantiate(
-                await require('fs/promises').readFile(
-                    require('path').join(__dirname, fatfsWasm)), 
-                importObject);
+        const source = await getWasm(importObject);
         const exports = source.instance.exports as FatFsExports;
         const context = new FatFsMemoryContext(memory, exports);
         return new FatFsDisk(context, exports);
