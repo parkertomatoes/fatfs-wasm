@@ -1,5 +1,5 @@
-import { describe, expect, test } from '@jest/globals'
-import { FatFsDisk, FatFsMode, FatFsAttrib, FatFsFileInfo } from '../src/fatfs';
+import { describe, expect, test, beforeEach } from 'vitest'
+import { FatFsDisk, FatFsMode, FatFsAttrib } from '../src/fatfs';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
@@ -12,13 +12,13 @@ describe('FatFs Disk Tests', () => {
 
     test('should format without error', async () => {
         const data = await readFile(path.join(__dirname, 'assets/emptyPartition.img'));
-        const disk = await FatFsDisk.create(data);
+        const disk = await FatFsDisk.create(new Uint8Array(data));
         disk.mkfs('');
     });
 
     test('should mount a workspace without error', async () => {
         const data = await readFile(path.join(__dirname, 'assets/emptyFormattedVolume.img'));
-        const disk = await FatFsDisk.create(data);
+        const disk = await FatFsDisk.create(new Uint8Array(data));
         const workspace = disk.mount('', 0);
         expect(workspace.ptr).not.toBe(0);
     });
@@ -30,7 +30,7 @@ describe('FatFs File File Tests', () => {
 
     beforeEach(async () => {
         data = await readFile(path.join(__dirname, 'assets/withFile.img'));
-        disk = await FatFsDisk.create(data);
+        disk = await FatFsDisk.create(new Uint8Array(data));
         disk.mount('', 0);
     });
 
@@ -66,7 +66,7 @@ describe('FatFs File File Tests', () => {
         const readFile = disk.open('data.txt', FatFsMode.READ);
         const readBuffer = new Uint8Array(12);
         readFile.read(readBuffer, 12);
-        expect(readBuffer).toStrictEqual(buffer);
+        expect(new TextDecoder().decode(readBuffer)).toStrictEqual('text-to-test');
     })
 
     test('should stat a file', () => {
@@ -113,7 +113,7 @@ describe('FatFs Empty Directory Tests', () => {
 
     beforeEach(async () => {
         data = await readFile(path.join(__dirname, 'assets/withEmptyDirectory.img'));
-        disk = await FatFsDisk.create(data);
+        disk = await FatFsDisk.create(new Uint8Array(data));
         disk.mount('', 0);
     });
 
@@ -152,7 +152,7 @@ describe('FatFs Directory Tests', () => {
 
     beforeEach(async () => {
         data = await readFile(path.join(__dirname, 'assets/withDirectory.img'));
-        disk = await FatFsDisk.create(data);
+        disk = await FatFsDisk.create(new Uint8Array(data));
         disk.mount('', 0);
     });
 

@@ -451,13 +451,12 @@ export class FatFsFile {
             const bytesToWrite = btw ?? buff.length;
             const buffPtr = scope.alloc(bytesToWrite);
             const bwPtr = scope.alloc(4);
+            this.#context.heap.subarray(buffPtr, buffPtr + bytesToWrite).set(buff);
             throwIfError(
                 "writing file",
                 () => this.#exports.f_write(this.#filePtr, buffPtr, bytesToWrite, bwPtr)
             );
-            const bytesWritten = this.#context.view.getUint32(bwPtr, true);
-            buff.set(this.#context.heap.subarray(buffPtr, buffPtr + bytesWritten));
-            return bytesWritten;
+            return this.#context.view.getUint32(bwPtr, true);
         });
     }
 
