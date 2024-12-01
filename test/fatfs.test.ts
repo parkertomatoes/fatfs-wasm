@@ -1,20 +1,34 @@
 import { describe, expect, test, beforeEach } from 'vitest'
-import { FatFsDisk, FatFsMode, FatFsAttrib } from '../src/fatfs';
+import { FatFsDisk, FatFsMode, FatFsAttrib, FatFsFormat } from '../src/fatfs';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
 describe('FatFs Disk Tests', () => {
     test('should partition without error', async () => {
         const data = new Uint8Array(1<<16); // 8MB
-        const disk = await FatFsDisk.create(data);
-        disk.fdisk(0, [100]);
+        const disk = await FatFsDisk.create(data, { multiPartition: true });
+        disk.fdisk([100]);
     });
 
     test('should format without error', async () => {
         const data = await readFile(path.join(__dirname, 'assets/emptyPartition.img'));
-        const disk = await FatFsDisk.create(new Uint8Array(data));
-        disk.mkfs('');
+        const disk = await FatFsDisk.create(new Uint8Array(data), { multiPartition: true });
+        disk.mkfs();
     });
+
+    test('should format using options without error', async () => {
+        const data = await readFile(path.join(__dirname, 'assets/emptyPartition.img'));
+        const disk = await FatFsDisk.create(new Uint8Array(data), { multiPartition: true });
+        disk.mkfs({
+            fmt: FatFsFormat.FAT,
+            nFat: 0, // default
+            align: 0, // default
+            nRoot: 0, // default
+            auSize: 0, // default
+            path: '' // default
+        });
+    });
+
 
     test('should mount a workspace without error', async () => {
         const data = await readFile(path.join(__dirname, 'assets/emptyFormattedVolume.img'));

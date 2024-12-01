@@ -2,6 +2,8 @@
 
 # Class: FatFsFileInfo
 
+Represents file information returned from [stat](FatFsDisk.md#stat) and iteration functions.
+
 ## Table of contents
 
 ### Constructors
@@ -44,7 +46,7 @@
 
 #### Defined in
 
-src/fatfs.ts:333
+[src/fatfs.ts:367](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L367)
 
 ## Properties
 
@@ -54,7 +56,7 @@ src/fatfs.ts:333
 
 #### Defined in
 
-src/fatfs.ts:330
+[src/fatfs.ts:364](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L364)
 
 ___
 
@@ -64,7 +66,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:329
+[src/fatfs.ts:363](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L363)
 
 ___
 
@@ -74,7 +76,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:331
+[src/fatfs.ts:365](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L365)
 
 ___
 
@@ -84,7 +86,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:328
+[src/fatfs.ts:362](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L362)
 
 ## Accessors
 
@@ -92,13 +94,15 @@ src/fatfs.ts:328
 
 • `get` **isArchive**(): `boolean`
 
+Whether or not the file or directory is archived
+
 #### Returns
 
 `boolean`
 
 #### Defined in
 
-src/fatfs.ts:369
+[src/fatfs.ts:418](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L418)
 
 ___
 
@@ -106,13 +110,15 @@ ___
 
 • `get` **isDirectory**(): `boolean`
 
+Whether or not the filesystem object is a directory or not
+
 #### Returns
 
 `boolean`
 
 #### Defined in
 
-src/fatfs.ts:367
+[src/fatfs.ts:408](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L408)
 
 ___
 
@@ -120,13 +126,15 @@ ___
 
 • `get` **isHidden**(): `boolean`
 
+Whether or not the file or directory is hidden
+
 #### Returns
 
 `boolean`
 
 #### Defined in
 
-src/fatfs.ts:368
+[src/fatfs.ts:413](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L413)
 
 ___
 
@@ -134,13 +142,15 @@ ___
 
 • `get` **isReadOnly**(): `boolean`
 
+Whether or not the file or directory is read-only
+
 #### Returns
 
 `boolean`
 
 #### Defined in
 
-src/fatfs.ts:366
+[src/fatfs.ts:403](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L403)
 
 ___
 
@@ -148,13 +158,15 @@ ___
 
 • `get` **isSystem**(): `boolean`
 
+Whether or not the file or directory is a system file or directory
+
 #### Returns
 
 `boolean`
 
 #### Defined in
 
-src/fatfs.ts:370
+[src/fatfs.ts:423](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L423)
 
 ## Methods
 
@@ -174,4 +186,4 @@ src/fatfs.ts:370
 
 #### Defined in
 
-src/fatfs.ts:340
+[src/fatfs.ts:374](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L374)

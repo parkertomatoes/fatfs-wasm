@@ -12,7 +12,7 @@
     "declaration": true,                                 /* Generate .d.ts files from TypeScript and JavaScript files in your project. */
     "declarationMap": true,
     "declarationDir": "./dist",
-    "rootDir": "./src",
+    "rootDir": ".",
     "sourceMap": true,                                   /* Create source map files for emitted JavaScript files. */
     "inlineSourceMap": false,                            /* Include sourcemap files inside the emitted JavaScript. */
     "esModuleInterop": true,                             /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */

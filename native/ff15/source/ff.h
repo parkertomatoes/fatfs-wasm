@@ -252,6 +252,7 @@ typedef struct {
 
 /* Format parameter structure (MKFS_PARM) */
 
+#pragma pack(push, 1)
 typedef struct {
 	BYTE fmt;			/* Format option (FM_FAT, FM_FAT32, FM_EXFAT and FM_SFD) */
 	BYTE n_fat;			/* Number of FATs */
@@ -259,6 +260,7 @@ typedef struct {
 	UINT n_root;		/* Number of root directory entries */
 	DWORD au_size;		/* Cluster size (byte) */
 } MKFS_PARM;
+#pragma pack(pop)
 
 
 /* File function return code (FRESULT) */

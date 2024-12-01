@@ -31,7 +31,7 @@ DSTATUS disk_status (
 {
 	if (pdrv != 0 || ram_disk.initialized == 0) 
 		return STA_NOINIT;
-	ram_disk.initialized =
+	ram_disk.initialized = 1;
 	return 0;
 }
 

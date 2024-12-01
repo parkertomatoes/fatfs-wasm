@@ -10,6 +10,12 @@ FatFs Directory Reference
 
 - [constructor](FatFsDir.md#constructor)
 
+### Properties
+
+- [#context](FatFsDir.md##context)
+- [#dirPtr](FatFsDir.md##dirptr)
+- [#exports](FatFsDir.md##exports)
+
 ### Accessors
 
 - [dp](FatFsDir.md#dp)
@@ -38,7 +44,37 @@ FatFs Directory Reference
 
 #### Defined in
 
-src/fatfs.ts:610
+[src/fatfs.ts:665](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L665)
+
+## Properties
+
+### #context
+
+• `Private` **#context**: `FatFsMemoryContext`
+
+#### Defined in
+
+[src/fatfs.ts:663](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L663)
+
+___
+
+### #dirPtr
+
+• `Private` **#dirPtr**: `number`
+
+#### Defined in
+
+[src/fatfs.ts:661](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L661)
+
+___
+
+### #exports
+
+• `Private` **#exports**: `FatFsExports`
+
+#### Defined in
+
+[src/fatfs.ts:662](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L662)
 
 ## Accessors
 
@@ -52,7 +88,7 @@ src/fatfs.ts:610
 
 #### Defined in
 
-src/fatfs.ts:616
+[src/fatfs.ts:671](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L671)
 
 ## Methods
 
@@ -66,7 +102,7 @@ src/fatfs.ts:616
 
 #### Defined in
 
-src/fatfs.ts:672
+[src/fatfs.ts:727](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L727)
 
 ___
 
@@ -82,7 +118,7 @@ Closes the open directory.
 
 #### Defined in
 
-src/fatfs.ts:623
+[src/fatfs.ts:678](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L678)
 
 ___
 
@@ -98,7 +134,7 @@ The f_findnext function searches for a next matched object
 
 #### Defined in
 
-src/fatfs.ts:660
+[src/fatfs.ts:715](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L715)
 
 ___
 
@@ -116,7 +152,7 @@ Information about the next directory entry
 
 #### Defined in
 
-src/fatfs.ts:635
+[src/fatfs.ts:690](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L690)
 
 ___
 
@@ -132,4 +168,4 @@ Rewinds the directory
 
 #### Defined in
 
-src/fatfs.ts:650
+[src/fatfs.ts:705](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L705)

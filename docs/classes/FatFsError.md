@@ -18,6 +18,7 @@ Exception thrown when a FatFs export returns a non-OK result
 
 ### Properties
 
+- [cause](FatFsError.md#cause)
 - [message](FatFsError.md#message)
 - [name](FatFsError.md#name)
 - [result](FatFsError.md#result)
@@ -48,9 +49,23 @@ Error.constructor
 
 #### Defined in
 
-src/fatfs.ts:376
+[src/fatfs.ts:429](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L429)
 
 ## Properties
+
+### cause
+
+• `Optional` **cause**: `unknown`
+
+#### Inherited from
+
+Error.cause
+
+#### Defined in
+
+node_modules/typescript/lib/lib.es2022.error.d.ts:24
+
+___
 
 ### message
 
@@ -86,7 +101,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:375
+[src/fatfs.ts:428](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L428)
 
 ___
 

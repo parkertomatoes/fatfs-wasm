@@ -22,7 +22,7 @@ File attribute bits for directory entry (FILINFO.fattrib)
 
 #### Defined in
 
-src/fatfs.ts:55
+[src/fatfs.ts:56](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L56)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:54
+[src/fatfs.ts:55](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L55)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:52
+[src/fatfs.ts:53](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L53)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:51
+[src/fatfs.ts:52](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L52)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:53
+[src/fatfs.ts:54](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L54)

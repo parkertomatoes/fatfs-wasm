@@ -35,7 +35,7 @@
 
 #### Defined in
 
-src/fatfs.ts:34
+[src/fatfs.ts:35](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L35)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:28
+[src/fatfs.ts:29](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L29)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:35
+[src/fatfs.ts:36](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L36)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:29
+[src/fatfs.ts:30](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L30)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:38
+[src/fatfs.ts:39](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L39)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:33
+[src/fatfs.ts:34](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L34)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:36
+[src/fatfs.ts:37](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L37)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:46
+[src/fatfs.ts:47](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L47)
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:43
+[src/fatfs.ts:44](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L44)
 
 ___
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:41
+[src/fatfs.ts:42](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L42)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:39
+[src/fatfs.ts:40](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L40)
 
 ___
 
@@ -145,7 +145,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:44
+[src/fatfs.ts:45](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L45)
 
 ___
 
@@ -155,7 +155,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:30
+[src/fatfs.ts:31](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L31)
 
 ___
 
@@ -165,7 +165,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:31
+[src/fatfs.ts:32](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L32)
 
 ___
 
@@ -175,7 +175,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:40
+[src/fatfs.ts:41](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L41)
 
 ___
 
@@ -185,7 +185,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:32
+[src/fatfs.ts:33](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L33)
 
 ___
 
@@ -195,7 +195,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:27
+[src/fatfs.ts:28](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L28)
 
 ___
 
@@ -205,7 +205,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:42
+[src/fatfs.ts:43](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L43)
 
 ___
 
@@ -215,7 +215,7 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:45
+[src/fatfs.ts:46](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L46)
 
 ___
 
@@ -225,4 +225,4 @@ ___
 
 #### Defined in
 
-src/fatfs.ts:37
+[src/fatfs.ts:38](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L38)

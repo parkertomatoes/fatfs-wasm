@@ -24,10 +24,11 @@ typedef enum {
 
 /*---------------------------------------*/
 /* Prototypes for disk control functions */
-
+#if FF_MULTI_PARTITION
 PARTITION VolToPart[FF_VOLUMES] = {
 	{ 0, 1 } // "0:" ==> 1st partition in PD#0
 };
+#endif
 
 __attribute__((import_module("env"), import_name("disk_initialize")))
 DSTATUS disk_initialize (BYTE pdrv);

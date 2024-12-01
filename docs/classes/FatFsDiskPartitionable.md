@@ -1,60 +1,65 @@
-[fatfs-wasm](../README.md) / [Exports](../modules.md) / FatFsDisk
+[fatfs-wasm](../README.md) / [Exports](../modules.md) / FatFsDiskPartitionable
 
-# Class: FatFsDisk
+# Class: FatFsDiskPartitionable
 
-Represents a FAT filesystem over an array of bytes
+Extension of [FatFsDisk](FatFsDisk.md) with extensions for partitioning a FAT drive with up to 4 partitions.
+
+If multi-partition support is enabled, accessing some types of FAT disks (e.g. floppes) may not work correctly.
 
 ## Hierarchy
 
-- **`FatFsDisk`**
+- [`FatFsDisk`](FatFsDisk.md)
 
-  ↳ [`FatFsDiskPartitionable`](FatFsDiskPartitionable.md)
+  ↳ **`FatFsDiskPartitionable`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](FatFsDisk.md#constructor)
+- [constructor](FatFsDiskPartitionable.md#constructor)
 
 ### Properties
 
-- [#context](FatFsDisk.md##context)
-- [#exports](FatFsDisk.md##exports)
+- [#context](FatFsDiskPartitionable.md##context)
+- [#context](FatFsDiskPartitionable.md##context-1)
+- [#exports](FatFsDiskPartitionable.md##exports)
+- [#exports](FatFsDiskPartitionable.md##exports-1)
 
 ### Methods
 
-- [chdir](FatFsDisk.md#chdir)
-- [chdrive](FatFsDisk.md#chdrive)
-- [chmod](FatFsDisk.md#chmod)
-- [find](FatFsDisk.md#find)
-- [findFirst](FatFsDisk.md#findfirst)
-- [getFree](FatFsDisk.md#getfree)
-- [getLabel](FatFsDisk.md#getlabel)
-- [getcwd](FatFsDisk.md#getcwd)
-- [mkdir](FatFsDisk.md#mkdir)
-- [mkfs](FatFsDisk.md#mkfs)
-- [mount](FatFsDisk.md#mount)
-- [open](FatFsDisk.md#open)
-- [openDir](FatFsDisk.md#opendir)
-- [readFile](FatFsDisk.md#readfile)
-- [rename](FatFsDisk.md#rename)
-- [session](FatFsDisk.md#session)
-- [setCP](FatFsDisk.md#setcp)
-- [setLabel](FatFsDisk.md#setlabel)
-- [stat](FatFsDisk.md#stat)
-- [unlink](FatFsDisk.md#unlink)
-- [unmount](FatFsDisk.md#unmount)
-- [utime](FatFsDisk.md#utime)
-- [writeFile](FatFsDisk.md#writefile)
-- [create](FatFsDisk.md#create)
+- [chdir](FatFsDiskPartitionable.md#chdir)
+- [chdrive](FatFsDiskPartitionable.md#chdrive)
+- [chmod](FatFsDiskPartitionable.md#chmod)
+- [fdisk](FatFsDiskPartitionable.md#fdisk)
+- [find](FatFsDiskPartitionable.md#find)
+- [findFirst](FatFsDiskPartitionable.md#findfirst)
+- [getFree](FatFsDiskPartitionable.md#getfree)
+- [getLabel](FatFsDiskPartitionable.md#getlabel)
+- [getcwd](FatFsDiskPartitionable.md#getcwd)
+- [mkdir](FatFsDiskPartitionable.md#mkdir)
+- [mkfs](FatFsDiskPartitionable.md#mkfs)
+- [mount](FatFsDiskPartitionable.md#mount)
+- [open](FatFsDiskPartitionable.md#open)
+- [openDir](FatFsDiskPartitionable.md#opendir)
+- [readFile](FatFsDiskPartitionable.md#readfile)
+- [rename](FatFsDiskPartitionable.md#rename)
+- [session](FatFsDiskPartitionable.md#session)
+- [setCP](FatFsDiskPartitionable.md#setcp)
+- [setLabel](FatFsDiskPartitionable.md#setlabel)
+- [stat](FatFsDiskPartitionable.md#stat)
+- [unlink](FatFsDiskPartitionable.md#unlink)
+- [unmount](FatFsDiskPartitionable.md#unmount)
+- [utime](FatFsDiskPartitionable.md#utime)
+- [writeFile](FatFsDiskPartitionable.md#writefile)
+- [create](FatFsDiskPartitionable.md#create)
 
 ## Constructors
 
 ### constructor
 
-• **new FatFsDisk**(`context`, `exports`)
+• **new FatFsDiskPartitionable**(`context`, `exports`)
 
-Private constructor. Use [create](FatFsDisk.md#create) to create a [FatFsDisk](FatFsDisk.md) object.
+Private constructor. Use [create](FatFsDisk.md#create) with the `multiPartition` option set to true to create a [FatFsDiskPartitionable](FatFsDiskPartitionable.md).
 
 #### Parameters
 
@@ -63,15 +68,37 @@ Private constructor. Use [create](FatFsDisk.md#create) to create a [FatFsDisk](F
 | `context` | `FatFsMemoryContext` |
 | `exports` | `FatFsExports` |
 
+#### Overrides
+
+[FatFsDisk](FatFsDisk.md).[constructor](FatFsDisk.md#constructor)
+
 #### Defined in
 
-[src/fatfs.ts:792](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L792)
+[src/fatfs.ts:1263](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1263)
 
 ## Properties
 
 ### #context
 
 • `Private` **#context**: `FatFsMemoryContext`
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[#context](FatFsDisk.md##context)
+
+#### Defined in
+
+[src/fatfs.ts:1257](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1257)
+
+___
+
+### #context
+
+• `Private` **#context**: `FatFsMemoryContext`
+
+#### Inherited from
+
+FatFsDisk.#context
 
 #### Defined in
 
@@ -82,6 +109,24 @@ ___
 ### #exports
 
 • `Private` **#exports**: `FatFsExports`
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[#exports](FatFsDisk.md##exports)
+
+#### Defined in
+
+[src/fatfs.ts:1258](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1258)
+
+___
+
+### #exports
+
+• `Private` **#exports**: `FatFsExports`
+
+#### Inherited from
+
+FatFsDisk.#exports
 
 #### Defined in
 
@@ -105,6 +150,10 @@ The f_chdir function changes the current directory of the logical drive.
 
 `void`
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[chdir](FatFsDisk.md#chdir)
+
 #### Defined in
 
 [src/fatfs.ts:1134](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1134)
@@ -126,6 +175,10 @@ The f_chdrive function changes the current drive.
 #### Returns
 
 `void`
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[chdrive](FatFsDisk.md#chdrive)
 
 #### Defined in
 
@@ -153,9 +206,36 @@ The f_chmod function changes the attribute of a file or sub-directory.
 
 OK or error code
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[chmod](FatFsDisk.md#chmod)
+
 #### Defined in
 
 [src/fatfs.ts:1069](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1069)
+
+___
+
+### fdisk
+
+▸ **fdisk**(`ptbl`, `pdrv?`): `void`
+
+The f_fdisk function divides a physical drive.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ptbl` | `number`[] | List of partition size to create on the drive. |
+| `pdrv?` | `number` | Specifies the physical drive to be divided. This is not the logical drive number but the drive identifier passed to the low level disk functions. |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/fatfs.ts:1279](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1279)
 
 ___
 
@@ -177,6 +257,10 @@ Searches a directory
 `IterableIterator`<[`FatFsFileInfo`](FatFsFileInfo.md)\>
 
 An iterator to the search results
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[find](FatFsDisk.md#find)
 
 #### Defined in
 
@@ -203,6 +287,10 @@ Searches a directory for an item.
 
 The directory, and the first matching entry
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[findFirst](FatFsDisk.md#findfirst)
+
 #### Defined in
 
 [src/fatfs.ts:966](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L966)
@@ -225,6 +313,10 @@ ___
 
 tuple with the number of free clusters, and a FATFS 
     object containing number of sectors per cluster.
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[getFree](FatFsDisk.md#getfree)
 
 #### Defined in
 
@@ -252,6 +344,10 @@ of a volume.
 tuple containing the result, the volume label, and the volume 
     serial number
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[getLabel](FatFsDisk.md#getlabel)
+
 #### Defined in
 
 [src/fatfs.ts:1206](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1206)
@@ -270,6 +366,10 @@ drive.
 `string`
 
 The current directory.
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[getcwd](FatFsDisk.md#getcwd)
 
 #### Defined in
 
@@ -292,6 +392,10 @@ The f_mkdir function creates a new directory.
 #### Returns
 
 `void`
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[mkdir](FatFsDisk.md#mkdir)
 
 #### Defined in
 
@@ -316,6 +420,10 @@ The f_mkfs function creates an FAT/exFAT volume on the logical drive.
 `void`
 
 OK or error code
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[mkfs](FatFsDisk.md#mkfs)
 
 #### Defined in
 
@@ -342,6 +450,10 @@ The f_mount function gives work area to the FatFs module.
 
 reference to the mounted work area
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[mount](FatFsDisk.md#mount)
+
 #### Defined in
 
 [src/fatfs.ts:836](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L836)
@@ -367,6 +479,10 @@ The f_open function opens a file.
 
 File object
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[open](FatFsDisk.md#open)
+
 #### Defined in
 
 [src/fatfs.ts:882](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L882)
@@ -390,6 +506,10 @@ The f_opendir function opens a directory.
 [`FatFsDir`](FatFsDir.md)
 
 Directory object
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[openDir](FatFsDisk.md#opendir)
 
 #### Defined in
 
@@ -415,6 +535,10 @@ Read an entire file.
 
 The contents of the file
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[readFile](FatFsDisk.md#readfile)
+
 #### Defined in
 
 [src/fatfs.ts:915](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L915)
@@ -439,6 +563,10 @@ The f_rename function renames and/or moves a file or sub-directory.
 `void`
 
 OK or error code
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[rename](FatFsDisk.md#rename)
 
 #### Defined in
 
@@ -469,6 +597,10 @@ Mounts the filesystem, executes a user function, and unmounts
 
 `ReturnType`<`T`\>
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[session](FatFsDisk.md#session)
+
 #### Defined in
 
 [src/fatfs.ts:901](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L901)
@@ -491,6 +623,10 @@ The f_setcp function sets the active code page.
 
 `void`
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[setCP](FatFsDisk.md#setcp)
+
 #### Defined in
 
 [src/fatfs.ts:1242](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1242)
@@ -512,6 +648,10 @@ The f_setlabel function sets/removes the label of a volume.
 #### Returns
 
 `void`
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[setLabel](FatFsDisk.md#setlabel)
 
 #### Defined in
 
@@ -537,6 +677,10 @@ The f_stat function checks the existence of a file or sub-directory.
 
 OK or error code
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[stat](FatFsDisk.md#stat)
+
 #### Defined in
 
 [src/fatfs.ts:1008](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1008)
@@ -559,6 +703,10 @@ The f_unlink function removes a file or sub-directory from the volume.
 
 `void`
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[unlink](FatFsDisk.md#unlink)
+
 #### Defined in
 
 [src/fatfs.ts:1026](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1026)
@@ -580,6 +728,10 @@ Unregisters the filesystem object
 #### Returns
 
 `void`
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[unmount](FatFsDisk.md#unmount)
 
 #### Defined in
 
@@ -606,6 +758,10 @@ The f_utime function changes the timestamp of a file or sub-directory.
 
 OK or error code
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[utime](FatFsDisk.md#utime)
+
 #### Defined in
 
 [src/fatfs.ts:1088](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L1088)
@@ -628,6 +784,10 @@ Write an entire file.
 #### Returns
 
 `void`
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[writeFile](FatFsDisk.md#writefile)
 
 #### Defined in
 
@@ -652,6 +812,10 @@ Create a new [FatFsDisk](FatFsDisk.md).
 
 `Promise`<[`FatFsDiskPartitionable`](FatFsDiskPartitionable.md)\>
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[create](FatFsDisk.md#create)
+
 #### Defined in
 
 [src/fatfs.ts:761](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L761)
@@ -671,6 +835,10 @@ Create a new [FatFsDisk](FatFsDisk.md).
 
 `Promise`<[`FatFsDisk`](FatFsDisk.md)\>
 
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[create](FatFsDisk.md#create)
+
 #### Defined in
 
 [src/fatfs.ts:769](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L769)
@@ -688,6 +856,10 @@ Create a new [FatFsDisk](FatFsDisk.md) with defaults
 #### Returns
 
 `Promise`<[`FatFsDisk`](FatFsDisk.md)\>
+
+#### Inherited from
+
+[FatFsDisk](FatFsDisk.md).[create](FatFsDisk.md#create)
 
 #### Defined in
 

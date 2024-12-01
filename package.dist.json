@@ -1,13 +1,19 @@
 {
   "name": "fatfs-wasm",
-  "version": "2.0.2",
+  "version": "3.0.1",
   "description": "High level bindings over a WASM port of FatFS by ChaN",
   "main": "./fatfs.min.js",
-  "exports": {
-    "import": "./fatfs.min.mjs",
-    "require": "./fatfs.min.js"
-  },
   "typings": "fatfs.d.ts",
+  "exports": {
+    "import": {
+      "default": "./fatfs.min.mjs",
+      "types": "./fatfs.d.ts"
+    },
+    "require": {
+      "default": "./fatfs.min.js",
+      "types": "./fatfs.d.ts"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

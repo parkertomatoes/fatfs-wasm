@@ -17,7 +17,9 @@ export default [{
     }],
     external: ['node:path', 'node:url', 'node:fs/promises'],
     plugins: [
-        typescript(),
+        typescript({
+            rootDir: './src'
+        }),
         terser({
             sourceMap: {
                 includeSources: true, 
@@ -26,7 +28,9 @@ export default [{
         }),
         copy({
             targets: [
-                { src: './src/ff.wasm', dest: 'dist' },
+                { src: './README.md', dest: 'dist' },
+                { src: './src/ff_multi.wasm', dest: 'dist' },
+                { src: './src/ff_single.wasm', dest: 'dist' },
                 { src: './package.dist.json', dest: 'dist', rename: 'package.json' }
             ]
         })
