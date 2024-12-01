@@ -35,13 +35,12 @@ const { FatFsDisk } = require('fatfs-wasm')
 ```
 
 ## Using
-FatFs can be used with typed arrays to partition and format disk images:
+FatFs can be used with typed arrays to create disk images:
 ```typescript
 const data = new Uint8Array(1 << 23);
 const disk = FatFsDisk.create(data);
-disk.fdisk(0, [100]); // Partition 100% to volume 0
-disk.mkfs('', 0);     // Format default drive
-disk.mount('');       // Mount workspace
+disk.mkfs();   // Format filesystem
+disk.mount();  // Mount workspace
 ```
 
 Or open existing ones:
@@ -49,7 +48,7 @@ Or open existing ones:
 const response = await fetch('disk.img');
 const data = new Uint8Array(response.arrayBuffer());
 const disk = FatFsDisk.create(data);
-disk.mount('');       // Mount workspace
+disk.mount();  // Mount workspace
 ```
 
 Once a workspace is mounted, the library provides APIs for manipulating files:
@@ -58,6 +57,9 @@ const file = disk.open('file.txt', FatFsMode.READ);
 const buffer = new Uint8Array(1024);
 file.read(buffer);
 file.close();
+
+// Or, for convenience:
+const file = disk.readFile('file.txt');
 ```
 
 As well as iterating directories 
@@ -83,9 +85,9 @@ To build, open a terminal in MacOS, Linux, or WSL with clang installed and run t
 cd native
 ./build.sh
 ```
-This will build `ff.wasm` and copy it to the `src` directory.
+This will build `ff_single.wasm` and `ff_multi.wasm` (multi-partition support) and copy it to the `src` directory.
 
 ## Running Tests
 ```
-npx jest
+npx vitest
 ```

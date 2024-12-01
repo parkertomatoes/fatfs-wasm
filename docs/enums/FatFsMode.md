@@ -27,7 +27,7 @@ overwritten.
 
 #### Defined in
 
-[src/fatfs.ts:83](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L83)
+[src/fatfs.ts:83](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L83)
 
 ___
 
@@ -40,7 +40,7 @@ existing.
 
 #### Defined in
 
-[src/fatfs.ts:78](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L78)
+[src/fatfs.ts:78](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L78)
 
 ___
 
@@ -52,7 +52,7 @@ Opens the file if it is existing. If not, a new file will be created.
 
 #### Defined in
 
-[src/fatfs.ts:87](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L87)
+[src/fatfs.ts:87](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L87)
 
 ___
 
@@ -65,7 +65,7 @@ file.
 
 #### Defined in
 
-[src/fatfs.ts:92](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L92)
+[src/fatfs.ts:92](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L92)
 
 ___
 
@@ -77,7 +77,7 @@ Opens a file. The function fails if the file is not existing. (Default)
 
 #### Defined in
 
-[src/fatfs.ts:73](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L73)
+[src/fatfs.ts:73](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L73)
 
 ___
 
@@ -89,7 +89,7 @@ Specifies read access to the file. Data can be read from the file.
 
 #### Defined in
 
-[src/fatfs.ts:64](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L64)
+[src/fatfs.ts:64](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L64)
 
 ___
 
@@ -102,4 +102,4 @@ Combine with FA_READ for read-write access.
 
 #### Defined in
 
-[src/fatfs.ts:69](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L69)
+[src/fatfs.ts:69](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L69)

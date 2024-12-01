@@ -92,8 +92,8 @@ export enum FatFsMode {
     OPEN_APPEND = 0x30
 }
 
-const FF_MAX_SS = 512;           /** Max sector size (must match ffconf.h) */
-const DEFAULT_SECTOR_SIZE = 512; /** Default sector size */
+const FF_MAX_SS = 512;           // Max sector size (must match ffconf.h) 
+const DEFAULT_SECTOR_SIZE = 512; // Default sector size 
 const SIZE_FILINFO = 24;
 const SIZE_FATFS_OBJ = 560;
 const SIZE_FIL = 576;
@@ -258,12 +258,18 @@ type HeapScope = {
  * Options provided to {@link FatFsDisk.mkfs}
  */
 export type FatFsMkfsOptions = {
-	fmt?: FatFsFormat;	/* Format option (FM_FAT, FM_FAT32, FM_EXFAT and FM_SFD) */
-	nFat?: number;		/* Number of FATs */
-	align?: number;		/* Data area alignment (sector) */
-	nRoot?: number;		/* Number of root directory entries */
-	auSize?: number;	/* Cluster size (byte) */
-    path?: string;      /* Drive number to format. Empty string uses default drive */
+	/** Format option (FM_FAT, FM_FAT32, FM_EXFAT and FM_SFD) */
+    fmt?: FatFsFormat;	
+	/** Number of FATs */
+    nFat?: number;		
+	/** Data area alignment (sector) */
+    align?: number;		
+	/** Number of root directory entries */
+    nRoot?: number;		
+	/** Cluster size (byte) */
+    auSize?: number;	
+    /** Drive number to format. Empty string uses default drive */
+    path?: string;      
 }
 
 class FatFsObject {
@@ -356,13 +362,17 @@ class FatFsMemoryContext {
 }
 
 /**
- * Represents file information returned from {@link FatFsDisk.stat} and iteration functions.
+ * Represents file or directory information returned from {@link FatFsDisk.stat} and iteration functions.
  */
 export class FatFsFileInfo {
-    readonly size: number; /** The size of the file or directory */
-    readonly date: Date; /** The last modified date of the file or directory */
-    readonly attrib: number; /** File attribute flags (see is* methods to get specific flags) */
-    readonly name: string; /** The name of the file or directory */
+    /** The size of the file or directory */
+    readonly size: number; 
+    /** The last modified date of the file or directory */
+    readonly date: Date; 
+    /** File attribute flags (see is* methods to get specific flags) */
+    readonly attrib: number; 
+    /** The name of the file or directory */
+    readonly name: string; 
 
     constructor(size: number, date: Date, attrib: number, name: string) {
         this.size = size;
@@ -371,7 +381,11 @@ export class FatFsFileInfo {
         this.name = name;
     }
 
-    static fromFilInfo(data: Uint8Array) {
+    /** 
+     * Creates a {@link FatFsFileInfo} from a packed FILINFO data structure returned from a FatFS function 
+     * @data Packed FILINFO structure bytes
+     */
+    static fromFilInfo(data: Uint8Array): FatFsFileInfo {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
         const size = view.getUint32(0, true);
 
@@ -736,8 +750,10 @@ export class FatFsDir {
  * Options for creating a {@link FatFsDisk}.
  */
 export type FatFsDiskOptions = {
-    sectorSize?: number; /** The size of the filesystem disk sectors, in bytes. Uses 512 if not provided. */
-    multiPartition?: boolean; /** Whether or not to enable multi-partition disks, which enables {@link FatFsDisk#fdisk} */
+    /** The size of the filesystem disk sectors, in bytes. Uses 512 if not provided. */
+    sectorSize?: number; 
+    /** Whether or not to enable multi-partition disks, which enables {@link FatFsDiskPartitionable.fdisk} */
+    multiPartition?: boolean; 
 }
 
 const FATFS_DISK_OPTION_DEFAULTS: Required<FatFsDiskOptions> = {

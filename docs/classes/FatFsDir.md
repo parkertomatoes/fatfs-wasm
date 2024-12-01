@@ -44,7 +44,7 @@ FatFs Directory Reference
 
 #### Defined in
 
-[src/fatfs.ts:665](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L665)
+[src/fatfs.ts:679](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L679)
 
 ## Properties
 
@@ -54,7 +54,7 @@ FatFs Directory Reference
 
 #### Defined in
 
-[src/fatfs.ts:663](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L663)
+[src/fatfs.ts:677](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L677)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:661](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L661)
+[src/fatfs.ts:675](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L675)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:662](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L662)
+[src/fatfs.ts:676](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L676)
 
 ## Accessors
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:671](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L671)
+[src/fatfs.ts:685](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L685)
 
 ## Methods
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:727](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L727)
+[src/fatfs.ts:741](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L741)
 
 ___
 
@@ -118,7 +118,7 @@ Closes the open directory.
 
 #### Defined in
 
-[src/fatfs.ts:678](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L678)
+[src/fatfs.ts:692](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L692)
 
 ___
 
@@ -134,7 +134,7 @@ The f_findnext function searches for a next matched object
 
 #### Defined in
 
-[src/fatfs.ts:715](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L715)
+[src/fatfs.ts:729](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L729)
 
 ___
 
@@ -152,7 +152,7 @@ Information about the next directory entry
 
 #### Defined in
 
-[src/fatfs.ts:690](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L690)
+[src/fatfs.ts:704](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L704)
 
 ___
 
@@ -168,4 +168,4 @@ Rewinds the directory
 
 #### Defined in
 
-[src/fatfs.ts:705](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L705)
+[src/fatfs.ts:719](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L719)

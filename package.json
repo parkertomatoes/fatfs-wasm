@@ -1,6 +1,6 @@
 {
   "name": "fatfs-wasm",
-  "version": "3.0.1",
+  "version": "3.0.3",
   "description": "High level bindings over a WASM port of FatFS by ChaN",
   "main": "dist/fatfs.min.js",
   "module": "dist/fatfs.min.mjs",

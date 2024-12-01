@@ -49,7 +49,7 @@ Error.constructor
 
 #### Defined in
 
-[src/fatfs.ts:429](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L429)
+[src/fatfs.ts:443](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L443)
 
 ## Properties
 
@@ -101,7 +101,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:428](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L428)
+[src/fatfs.ts:442](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L442)
 
 ___
 

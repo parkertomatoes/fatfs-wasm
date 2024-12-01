@@ -22,7 +22,7 @@ Disk I/O control commands (for disk_ioctl)
 
 #### Defined in
 
-[src/fatfs.ts:10](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L10)
+[src/fatfs.ts:10](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L10)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:14](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L14)
+[src/fatfs.ts:14](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L14)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:13](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L13)
+[src/fatfs.ts:13](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L13)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:11](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L11)
+[src/fatfs.ts:11](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L11)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:12](https://github.com/parkertomatoes/fatfs-wasm/blob/fa8ebf7/src/fatfs.ts#L12)
+[src/fatfs.ts:12](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L12)
