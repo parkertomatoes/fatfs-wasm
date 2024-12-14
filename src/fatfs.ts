@@ -102,27 +102,21 @@ const OFFSET_FATFS_CSIZE = 10;
 
 /* HELPER FUNCTIONS */
 
+// URL resolution must be at the top level because the 
+// UMD polyfill for import.meta.url uses document.currentSource.src.
+const singleWasmUrl = new URL('./ff_multi.wasm', import.meta.url);
+const multiWasmUrl = new URL('./ff_single.wasm', import.meta.url);
 async function getWasm(importObject: WebAssembly.Imports, options: FatFsDiskOptions) {
+    const wasmUrl = options?.multiPartition ? singleWasmUrl : multiWasmUrl;
     if (typeof window !== 'undefined') { // Browser
-        const url = import.meta.url 
-        const parentUrl = url.substring( 0, url.lastIndexOf( "/" ) + 1);
-        const wasmUrl = options?.multiPartition
-            ? `${parentUrl}/ff_multi.wasm`
-            : `${parentUrl}/ff_single.wasm`
         return await WebAssembly.instantiateStreaming(fetch(wasmUrl), importObject);
+    } else { // Node
+        const { readFile } = await import('node:fs/promises');
+        const { fileURLToPath } = await import('node:url');
+        const wasmData = await readFile(fileURLToPath(wasmUrl));
+        return await WebAssembly.instantiate(wasmData, importObject);
     }
-
-    // NodeJS: use ESM syntax and let rollup convert to CommonJS
-    const { readFile } = await import('node:fs/promises');
-    const { join, dirname } = await import('node:path');
-    const { fileURLToPath } = await import('node:url');
-    const filePath = fileURLToPath(import.meta.url);
-    const wasmPath = join(dirname(filePath), options?.multiPartition
-        ? 'ff_multi.wasm'
-        : 'ff_single.wasm');
-    const wasmData = await readFile(wasmPath);
-    return await WebAssembly.instantiate(wasmData, importObject);
-}    
+};
 
 function throwIfError(actionName: string, action: () => FatFsResult, onError?: () => void) {
     const result = action();
