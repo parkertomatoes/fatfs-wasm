@@ -45,7 +45,7 @@ Or open existing ones:
 ```typescript
 const response = await fetch('disk.img');
 const data = new Uint8Array(response.arrayBuffer());
-const disk = FatFsDisk.create(data);
+const disk = await FatFsDisk.create(data);
 disk.mount();  // Mount workspace
 ```
 
