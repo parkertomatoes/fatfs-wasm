@@ -62,7 +62,7 @@ const file = disk.readFile('file.txt');
 
 As well as iterating directories 
 ```typescript
-const dir = disk.open('folder');
+const dir = disk.openDir('folder');
 for (const file of dir) {
     // ...
 }
