@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/fatfs.ts",
+    "src/assets.d.ts",
+    "src/node-shims.d.ts"
+  ]
+}

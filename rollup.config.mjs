@@ -1,11 +1,29 @@
 import terser from '@rollup/plugin-terser';
 import typescript from '@rollup/plugin-typescript';
-import copy from 'rollup-plugin-copy';
-import { importMetaAssets } from "@web/rollup-plugin-import-meta-assets";
+import { cpSync, mkdirSync, rmSync } from 'node:fs';
 
 const rebaseDist = relPath => relPath.startsWith('../')
     ? relPath.substring(1)
     : relPath;
+
+const cleanDist = () => ({
+    name: 'clean-dist',
+    buildStart() {
+        rmSync('./dist', { recursive: true, force: true });
+    }
+});
+
+const copyDistFiles = () => ({
+    name: 'copy-dist-files',
+    writeBundle() {
+        mkdirSync('./dist/src', { recursive: true });
+        cpSync('./README.md', './dist/README.md');
+        cpSync('./package.dist.json', './dist/package.json');
+        cpSync('./src/fatfs.ts', './dist/src/fatfs.ts');
+        cpSync('./src/ff.wasm', './dist/ff.wasm');
+        cpSync('./src/ff_exfat.wasm', './dist/ff_exfat.wasm');
+    }
+});
 
 export default [{
     /* Library */
@@ -25,19 +43,13 @@ export default [{
     }],
     external: ['node:path', 'node:url', 'node:fs/promises'],
     plugins: [
+        cleanDist(),
         typescript({
             rootDir: './src'
         }),
         terser({
             sourceMap: true
         }),
-        importMetaAssets(),
-        copy({
-            targets: [
-                { src: './README.md', dest: 'dist' },
-                { src: './package.dist.json', dest: 'dist', rename: 'package.json' },
-                { src: './src/fatfs.ts', dest: 'dist/src' }
-            ]
-        })
+        copyDistFiles()
     ]
 }]

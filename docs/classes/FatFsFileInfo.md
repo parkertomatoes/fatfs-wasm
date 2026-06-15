@@ -46,7 +46,7 @@ Represents file or directory information returned from [stat](FatFsDisk.md#stat)
 
 #### Defined in
 
-[src/fatfs.ts:377](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L377)
+[src/fatfs.ts:450](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L450)
 
 ## Properties
 
@@ -58,7 +58,7 @@ File attribute flags (see is* methods to get specific flags)
 
 #### Defined in
 
-[src/fatfs.ts:373](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L373)
+[src/fatfs.ts:446](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L446)
 
 ___
 
@@ -70,7 +70,7 @@ The last modified date of the file or directory
 
 #### Defined in
 
-[src/fatfs.ts:371](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L371)
+[src/fatfs.ts:444](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L444)
 
 ___
 
@@ -82,7 +82,7 @@ The name of the file or directory
 
 #### Defined in
 
-[src/fatfs.ts:375](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L375)
+[src/fatfs.ts:448](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L448)
 
 ___
 
@@ -94,7 +94,7 @@ The size of the file or directory
 
 #### Defined in
 
-[src/fatfs.ts:369](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L369)
+[src/fatfs.ts:442](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L442)
 
 ## Accessors
 
@@ -110,7 +110,7 @@ Whether or not the file or directory is archived
 
 #### Defined in
 
-[src/fatfs.ts:432](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L432)
+[src/fatfs.ts:506](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L506)
 
 ___
 
@@ -126,7 +126,7 @@ Whether or not the filesystem object is a directory or not
 
 #### Defined in
 
-[src/fatfs.ts:422](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L422)
+[src/fatfs.ts:496](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L496)
 
 ___
 
@@ -142,7 +142,7 @@ Whether or not the file or directory is hidden
 
 #### Defined in
 
-[src/fatfs.ts:427](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L427)
+[src/fatfs.ts:501](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L501)
 
 ___
 
@@ -158,7 +158,7 @@ Whether or not the file or directory is read-only
 
 #### Defined in
 
-[src/fatfs.ts:417](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L417)
+[src/fatfs.ts:491](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L491)
 
 ___
 
@@ -174,30 +174,31 @@ Whether or not the file or directory is a system file or directory
 
 #### Defined in
 
-[src/fatfs.ts:437](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L437)
+[src/fatfs.ts:511](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L511)
 
 ## Methods
 
 ### fromFilInfo
 
-▸ `Static` **fromFilInfo**(`data`): [`FatFsFileInfo`](FatFsFileInfo.md)
+▸ `Static` **fromFilInfo**(`data`, `layout`): [`FatFsFileInfo`](FatFsFileInfo.md)
 
 Creates a [FatFsFileInfo](FatFsFileInfo.md) from a packed FILINFO data structure returned from a FatFS function
-
-**`Data`**
-
-Packed FILINFO structure bytes
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `data` | `Uint8Array` |
+| `layout` | `NativeLayout` |
 
 #### Returns
 
 [`FatFsFileInfo`](FatFsFileInfo.md)
 
+**`Data`**
+
+Packed FILINFO structure bytes
+
 #### Defined in
 
-[src/fatfs.ts:388](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L388)
+[src/fatfs.ts:461](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L461)

@@ -22,7 +22,7 @@ Format options (2nd argument of f_mkfs)
 
 #### Defined in
 
-[src/fatfs.ts:22](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L22)
+[src/fatfs.ts:25](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L25)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:21](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L21)
+[src/fatfs.ts:24](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L24)
 
 ___
 
@@ -42,7 +42,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:19](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L19)
+[src/fatfs.ts:22](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L22)
 
 ___
 
@@ -52,7 +52,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:20](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L20)
+[src/fatfs.ts:23](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L23)
 
 ___
 
@@ -62,4 +62,4 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:23](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L23)
+[src/fatfs.ts:26](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L26)

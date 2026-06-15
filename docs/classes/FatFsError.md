@@ -23,12 +23,6 @@ Exception thrown when a FatFs export returns a non-OK result
 - [name](FatFsError.md#name)
 - [result](FatFsError.md#result)
 - [stack](FatFsError.md#stack)
-- [prepareStackTrace](FatFsError.md#preparestacktrace)
-- [stackTraceLimit](FatFsError.md#stacktracelimit)
-
-### Methods
-
-- [captureStackTrace](FatFsError.md#capturestacktrace)
 
 ## Constructors
 
@@ -49,7 +43,7 @@ Error.constructor
 
 #### Defined in
 
-[src/fatfs.ts:443](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L443)
+[src/fatfs.ts:517](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L517)
 
 ## Properties
 
@@ -101,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:442](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L442)
+[src/fatfs.ts:516](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L516)
 
 ___
 
@@ -116,79 +110,3 @@ Error.stack
 #### Defined in
 
 node_modules/typescript/lib/lib.es5.d.ts:1069
-
-___
-
-### prepareStackTrace
-
-▪ `Static` `Optional` **prepareStackTrace**: (`err`: `Error`, `stackTraces`: `CallSite`[]) => `any`
-
-#### Type declaration
-
-▸ (`err`, `stackTraces`): `any`
-
-Optional override for formatting stack traces
-
-**`See`**
-
-https://v8.dev/docs/stack-trace-api#customizing-stack-traces
-
-##### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `err` | `Error` |
-| `stackTraces` | `CallSite`[] |
-
-##### Returns
-
-`any`
-
-#### Inherited from
-
-Error.prepareStackTrace
-
-#### Defined in
-
-node_modules/@types/node/globals.d.ts:11
-
-___
-
-### stackTraceLimit
-
-▪ `Static` **stackTraceLimit**: `number`
-
-#### Inherited from
-
-Error.stackTraceLimit
-
-#### Defined in
-
-node_modules/@types/node/globals.d.ts:13
-
-## Methods
-
-### captureStackTrace
-
-▸ `Static` **captureStackTrace**(`targetObject`, `constructorOpt?`): `void`
-
-Create .stack property on a target object
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `targetObject` | `object` |
-| `constructorOpt?` | `Function` |
-
-#### Returns
-
-`void`
-
-#### Inherited from
-
-Error.captureStackTrace
-
-#### Defined in
-
-node_modules/@types/node/globals.d.ts:4

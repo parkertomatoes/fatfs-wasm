@@ -26,10 +26,7 @@ FatFs file object
 - [eof](FatFsFile.md#eof)
 - [error](FatFsFile.md#error)
 - [expand](FatFsFile.md#expand)
-- [gets](FatFsFile.md#gets)
 - [lseek](FatFsFile.md#lseek)
-- [putc](FatFsFile.md#putc)
-- [puts](FatFsFile.md#puts)
 - [read](FatFsFile.md#read)
 - [rewind](FatFsFile.md#rewind)
 - [size](FatFsFile.md#size)
@@ -54,7 +51,7 @@ FatFs file object
 
 #### Defined in
 
-[src/fatfs.ts:459](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L459)
+[src/fatfs.ts:533](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L533)
 
 ## Properties
 
@@ -64,7 +61,7 @@ FatFs file object
 
 #### Defined in
 
-[src/fatfs.ts:457](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L457)
+[src/fatfs.ts:531](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L531)
 
 ___
 
@@ -74,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:456](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L456)
+[src/fatfs.ts:530](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L530)
 
 ___
 
@@ -84,7 +81,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:455](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L455)
+[src/fatfs.ts:529](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L529)
 
 ## Accessors
 
@@ -100,7 +97,7 @@ Low level pointer to the file descriptor
 
 #### Defined in
 
-[src/fatfs.ts:472](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L472)
+[src/fatfs.ts:546](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L546)
 
 ## Methods
 
@@ -116,7 +113,7 @@ The f_close function closes an open file and destroys the file object.
 
 #### Defined in
 
-[src/fatfs.ts:524](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L524)
+[src/fatfs.ts:598](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L598)
 
 ___
 
@@ -142,7 +139,7 @@ The f_eof function returns a non-zero value
 
 #### Defined in
 
-[src/fatfs.ts:648](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L648)
+[src/fatfs.ts:681](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L681)
 
 ___
 
@@ -167,7 +164,7 @@ Returns a non-zero value if a hard error has occured;
 
 #### Defined in
 
-[src/fatfs.ts:665](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L665)
+[src/fatfs.ts:699](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L699)
 
 ___
 
@@ -191,31 +188,7 @@ the file.
 
 #### Defined in
 
-[src/fatfs.ts:583](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L583)
-
-___
-
-### gets
-
-▸ **gets**(`maxSize`): `string`
-
-The f_gets reads a string from the file.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `maxSize` | `number` |
-
-#### Returns
-
-`string`
-
-the string
-
-#### Defined in
-
-[src/fatfs.ts:594](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L594)
+[src/fatfs.ts:658](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L658)
 
 ___
 
@@ -239,60 +212,7 @@ object. It can also be used to expand the file size
 
 #### Defined in
 
-[src/fatfs.ts:553](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L553)
-
-___
-
-### putc
-
-▸ **putc**(`chr`): `number`
-
-The f_putc function puts a character to the file.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `chr` | `number` | A code unit to write. |
-
-#### Returns
-
-`number`
-
-When the character was written successfuly, it returns number 
-    of character encoding units written to the file. When the function 
-    failed due to disk full or any error, a negative value will be returned.
-
-#### Defined in
-
-[src/fatfs.ts:612](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L612)
-
-___
-
-### puts
-
-▸ **puts**(`str`): `number`
-
-The f_puts function writes a string to the file.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `str` | `string` | Pointer to the null terminated string to be written. The terminator character will not be written. |
-
-#### Returns
-
-`number`
-
-When the string was written successfuly, it returns number 
-    of character encoding units written to the file. When the function 
-    failed due to disk full or any error, a negative value will be 
-    returned.
-
-#### Defined in
-
-[src/fatfs.ts:626](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L626)
+[src/fatfs.ts:627](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L627)
 
 ___
 
@@ -317,7 +237,7 @@ number of bytes read
 
 #### Defined in
 
-[src/fatfs.ts:482](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L482)
+[src/fatfs.ts:556](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L556)
 
 ___
 
@@ -331,7 +251,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:560](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L560)
+[src/fatfs.ts:635](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L635)
 
 ___
 
@@ -349,7 +269,7 @@ Returns the size of the file in unit of byte.
 
 #### Defined in
 
-[src/fatfs.ts:656](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L656)
+[src/fatfs.ts:689](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L689)
 
 ___
 
@@ -365,7 +285,7 @@ The f_sync function flushes the cached information of a writing file.
 
 #### Defined in
 
-[src/fatfs.ts:538](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L538)
+[src/fatfs.ts:612](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L612)
 
 ___
 
@@ -383,7 +303,7 @@ Returns current read/write pointer of the file.
 
 #### Defined in
 
-[src/fatfs.ts:638](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L638)
+[src/fatfs.ts:670](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L670)
 
 ___
 
@@ -400,7 +320,7 @@ read/write pointer.
 
 #### Defined in
 
-[src/fatfs.ts:568](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L568)
+[src/fatfs.ts:643](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L643)
 
 ___
 
@@ -425,4 +345,4 @@ number of bytes written
 
 #### Defined in
 
-[src/fatfs.ts:507](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L507)
+[src/fatfs.ts:581](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L581)

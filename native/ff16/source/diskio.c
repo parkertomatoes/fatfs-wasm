@@ -1,5 +1,5 @@
 /*-----------------------------------------------------------------------*/
-/* Low level disk I/O module SKELETON for FatFs     (C)ChaN, 2019        */
+/* Low level disk I/O module SKELETON for FatFs     (C)ChaN, 2025        */
 /*-----------------------------------------------------------------------*/
 /* If a working storage control module is available, it should be        */
 /* attached to the FatFs via a glue function rather than modifying it.   */
@@ -7,19 +7,18 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 
-#include "ff.h"			/* Obtains integer types */
-#include "diskio.h"		/* Declarations of disk functions */
+#include "ff.h"			/* Basic definitions of FatFs */
+#include "diskio.h"		/* Declarations FatFs MAI */
 
-/* Definitions of physical drive number for each drive */
-#define DEV_RAM		0	/* Example: Map Ramdisk to physical drive 0 */
-#define DEV_MMC		1	/* Example: Map MMC/SD card to physical drive 1 */
-#define DEV_USB		2	/* Example: Map USB MSD to physical drive 2 */
+/* Example: Declarations of the platform and disk functions in the project */
+#include "platform.h"
+#include "storage.h"
 
-struct DiskMemory {
-	void* data;
-	int initialized;
-};
-struct DiskMemory ram_disk = { 0 };
+/* Example: Mapping of physical drive number for each drive */
+#define DEV_FLASH	0	/* Map FTL to physical drive 0 */
+#define DEV_MMC		1	/* Map MMC/SD card to physical drive 1 */
+#define DEV_USB		2	/* Map USB MSD to physical drive 2 */
+
 
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
@@ -29,11 +28,35 @@ DSTATUS disk_status (
 	BYTE pdrv		/* Physical drive nmuber to identify the drive */
 )
 {
-	if (pdrv != 0 || ram_disk.initialized == 0) 
-		return STA_NOINIT;
-	ram_disk.initialized = 1;
-	return 0;
+	DSTATUS stat;
+	int result;
+
+	switch (pdrv) {
+	case DEV_RAM :
+		result = RAM_disk_status();
+
+		// translate the result code here
+
+		return stat;
+
+	case DEV_MMC :
+		result = MMC_disk_status();
+
+		// translate the result code here
+
+		return stat;
+
+	case DEV_USB :
+		result = USB_disk_status();
+
+		// translate the result code here
+
+		return stat;
+	}
+	return STA_NOINIT;
 }
+
+
 
 /*-----------------------------------------------------------------------*/
 /* Inidialize a Drive                                                    */
@@ -50,21 +73,21 @@ DSTATUS disk_initialize (
 	case DEV_RAM :
 		result = RAM_disk_initialize();
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return stat;
 
 	case DEV_MMC :
 		result = MMC_disk_initialize();
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return stat;
 
 	case DEV_USB :
 		result = USB_disk_initialize();
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return stat;
 	}
@@ -93,7 +116,7 @@ DRESULT disk_read (
 
 		result = RAM_disk_read(buff, sector, count);
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return res;
 
@@ -102,7 +125,7 @@ DRESULT disk_read (
 
 		result = MMC_disk_read(buff, sector, count);
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return res;
 
@@ -111,7 +134,7 @@ DRESULT disk_read (
 
 		result = USB_disk_read(buff, sector, count);
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return res;
 	}
@@ -143,7 +166,7 @@ DRESULT disk_write (
 
 		result = RAM_disk_write(buff, sector, count);
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return res;
 
@@ -152,7 +175,7 @@ DRESULT disk_write (
 
 		result = MMC_disk_write(buff, sector, count);
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return res;
 
@@ -161,7 +184,7 @@ DRESULT disk_write (
 
 		result = USB_disk_write(buff, sector, count);
 
-		// translate the reslut code here
+		// translate the result code here
 
 		return res;
 	}

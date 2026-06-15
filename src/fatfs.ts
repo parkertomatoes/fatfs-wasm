@@ -3,6 +3,9 @@
  * @module fatfs-wasm
  */
 
+import wasmUrl from './ff.wasm?url&no-inline';
+import exfatGptWasmUrl from './ff_exfat.wasm?url&no-inline';
+
 /* CONSTANTS */
 
 /** Disk I/O control commands (for disk_ioctl) */
@@ -94,26 +97,52 @@ export enum FatFsMode {
 
 const FF_MAX_SS = 512;           // Max sector size (must match ffconf.h) 
 const DEFAULT_SECTOR_SIZE = 512; // Default sector size 
-const SIZE_FILINFO = 24;
-const SIZE_FATFS_OBJ = 560;
-const SIZE_FIL = 576;
-const SIZE_DIR = 64
-const OFFSET_FATFS_CSIZE = 10;
+type NativeLayout = {
+    sizeFatfs: number;
+    sizeFil: number;
+    sizeDir: number;
+    sizeFilinfo: number;
+    offsetFatfsCsize: number;
+    offsetFilinfoFattrib: number;
+    offsetFilinfoAltname: number;
+    offsetFilinfoFname: number;
+    tcharSize: number;
+    lbaSize: number;
+};
+
+const UINT32_SIZE = 0x100000000;
 
 /* HELPER FUNCTIONS */
 
-// URL resolution must be at the top level because the 
-// UMD polyfill for import.meta.url uses document.currentSource.src.
-const singleWasmUrl = new URL('./ff_multi.wasm', import.meta.url);
-const multiWasmUrl = new URL('./ff_single.wasm', import.meta.url);
 async function getWasm(importObject: WebAssembly.Imports, options: FatFsDiskOptions) {
-    const wasmUrl = options?.multiPartition ? singleWasmUrl : multiWasmUrl;
+    const selectedWasmUrl = options?.exfat ? exfatGptWasmUrl : wasmUrl;
     if (typeof window !== 'undefined') { // Browser
-        return await WebAssembly.instantiateStreaming(fetch(wasmUrl), importObject);
+        return await WebAssembly.instantiateStreaming(fetch(selectedWasmUrl), importObject);
     } else { // Node
+        if (selectedWasmUrl.startsWith('data:')) {
+            const response = await fetch(selectedWasmUrl);
+            const wasmData = await response.arrayBuffer();
+            return await WebAssembly.instantiate(wasmData, importObject);
+        }
         const { readFile } = await import('node:fs/promises');
-        const { fileURLToPath } = await import('node:url');
-        const wasmData = await readFile(fileURLToPath(wasmUrl));
+        const { fileURLToPath, pathToFileURL } = await import('node:url');
+        if (selectedWasmUrl.startsWith('file:')) {
+            const wasmUrl = new URL(selectedWasmUrl);
+            wasmUrl.search = '';
+            wasmUrl.hash = '';
+            const wasmData = await readFile(fileURLToPath(wasmUrl));
+            return await WebAssembly.instantiate(wasmData, importObject);
+        }
+        const wasmPath = selectedWasmUrl.split(/[?#]/, 1)[0];
+        if (selectedWasmUrl.startsWith('/')) {
+            const { cwd } = await import('node:process');
+            const wasmData = await readFile(fileURLToPath(pathToFileURL(`${cwd()}${wasmPath}`)));
+            return await WebAssembly.instantiate(wasmData, importObject);
+        }
+        const baseUrl = typeof __dirname !== 'undefined' ? pathToFileURL(`${__dirname}/`) : undefined;
+        if (!baseUrl)
+            throw new Error('Unable to resolve WASM URL in this Node.js module format');
+        const wasmData = await readFile(fileURLToPath(new URL(wasmPath, baseUrl)));
         return await WebAssembly.instantiate(wasmData, importObject);
     }
 };
@@ -126,36 +155,68 @@ function throwIfError(actionName: string, action: () => FatFsResult, onError?: (
     }
 }
 
+function splitUint64(value: number): [number, number] {
+    if (!Number.isSafeInteger(value) || value < 0)
+        throw new RangeError("Expected a non-negative safe integer");
+    return [value >>> 0, Math.floor(value / UINT32_SIZE)];
+}
+
+function getUint64Number(view: DataView, offset: number): number {
+    const low = view.getUint32(offset, true);
+    const high = view.getUint32(offset + 4, true);
+    const value = low + (high * UINT32_SIZE);
+    if (!Number.isSafeInteger(value))
+        throw new RangeError("64-bit value exceeds Number.MAX_SAFE_INTEGER");
+    return value;
+}
+
+function setUint64Number(view: DataView, offset: number, value: number): void {
+    const [low, high] = splitUint64(value);
+    view.setUint32(offset, low, true);
+    view.setUint32(offset + 4, high, true);
+}
+
 function createImportObject(
     memory: WebAssembly.Memory,
     disk: Uint8Array,
-    sectorSize?: number
+    sectorSize?: number,
+    lbaSize?: number
 ): WebAssembly.Imports {
     const ss = (sectorSize ?? DEFAULT_SECTOR_SIZE) | 0;
-    const sectorCount = (disk.byteLength / ss) | 0;
+    const sectorCount = Math.floor(disk.byteLength / ss);
+    const isValidPhysicalDrive = (pdrv: number) => pdrv === 0;
+    const toSectorNumber = (low: number, high: number) => (low >>> 0) + ((high >>> 0) * UINT32_SIZE);
 
     return {
         env: {
             memory: memory,
             disk_initialize: (pdrv: number) => {
-                return FatFsResult.OK;
+                return isValidPhysicalDrive(pdrv) ? 0 : 1; // STA_NOINIT
             },
             disk_status: (pdrv: number) => {
-                return FatFsResult.OK;
+                return isValidPhysicalDrive(pdrv) ? 0 : 1; // STA_NOINIT
             },
-            disk_read: (pdrv: number, buff: number, sector: number, count: number) => {
-                const src = disk.subarray(sector * ss, (sector + count) * ss);
+            ffw_disk_read: (pdrv: number, buff: number, sectorLow: number, sectorHigh: number, count: number) => {
+                if (!isValidPhysicalDrive(pdrv))
+                    return 4; // RES_PARERR
+                const sectorNumber = toSectorNumber(sectorLow, sectorHigh);
+                const src = disk.subarray(sectorNumber * ss, (sectorNumber + count) * ss);
                 const heap = new Uint8Array(memory.buffer);
                 heap.set(src, buff);
-                return FatFsResult.OK;
+                return 0; // RES_OK
             },
-            disk_write: (pdrv: number, buff: number, sector: number, count: number) => {
+            ffw_disk_write: (pdrv: number, buff: number, sectorLow: number, sectorHigh: number, count: number) => {
+                if (!isValidPhysicalDrive(pdrv))
+                    return 4; // RES_PARERR
+                const sectorNumber = toSectorNumber(sectorLow, sectorHigh);
                 const heap = new Uint8Array(memory.buffer);
                 const src = heap.subarray(buff, buff + (count * ss));
-                disk.set(src, sector * ss);
-                return FatFsResult.OK;
+                disk.set(src, sectorNumber * ss);
+                return 0; // RES_OK
             },
             disk_ioctl: (pdrv: number, cmd: number, buff: number) => {
+                if (!isValidPhysicalDrive(pdrv))
+                    return 4; // RES_PARERR
                 const view = new DataView(memory.buffer);
                 switch (cmd) {
                     case FatFsIoctl.CTRL_SYNC:
@@ -166,10 +227,14 @@ function createImportObject(
                         view.setUint16(buff, ss, true);
                         break;
                     case FatFsIoctl.GET_SECTOR_COUNT:
-                        view.setUint32(buff, sectorCount, true); 
+                        if (lbaSize === 8)
+                            setUint64Number(view, buff, sectorCount);
+                        else
+                            view.setUint32(buff, sectorCount, true); 
                         break; 
                     case FatFsIoctl.GET_BLOCK_SIZE:
-                        return 1; // unknown/non-flash media
+                        view.setUint32(buff, 1, true); // unknown/non-flash media
+                        break;
                     case FatFsIoctl.CTRL_TRIM:
                         // Nothing to do for this command if this funcion is not 
                         // supported or not a flash memory device
@@ -177,7 +242,7 @@ function createImportObject(
                     default:
                         break;
                 }
-                return FatFsResult.OK;
+                return 0; // RES_OK
             },
             get_fattime: () => {
                 const date = new Date();
@@ -213,16 +278,7 @@ type FatFsExports = {
     f_write: (fp: number, buff: number, btw: number, bw: number) => number;
     f_close: (fp: number) => number;
     f_sync: (fp: number) => number;
-    f_lseek: (fp: number, ofs: number) => number;
     f_truncate: (fp: number) => number;
-    f_expand: (fp: number, fsz: number, opt: number) => number;
-    f_gets: (buff: number, len: number, fp: number) => number;
-    f_putc: (chr: number, fp: number) => number;
-    f_puts: (str: number, fp: number) => number;
-    f_tell: (fp: number) => number;
-    f_eof: (fp: number) => number;
-    f_size: (fp: number) => number;
-    f_error: (fp: number) => number;
     f_opendir: (dp: number, path: number) => number;
     f_closedir: (dp: number) => number;
     f_readdir: (dp: number, fno: number) => number;
@@ -240,7 +296,24 @@ type FatFsExports = {
     f_getfree: (path: number, nclst: number, fatfs: number) => number;
     f_getlabel: (path: number, label: number, vsn: number) => number;
     f_setlabel: (label: number) => number;
-    f_setcp: (cp: number) => number;
+    ffw_f_lseek: (fp: number, ofsLow: number, ofsHigh: number) => number;
+    ffw_f_expand: (fp: number, fszLow: number, fszHigh: number, opt: number) => number;
+    ffw_f_tell_low: (fp: number) => number;
+    ffw_f_tell_high: (fp: number) => number;
+    ffw_f_size_low: (fp: number) => number;
+    ffw_f_size_high: (fp: number) => number;
+    ffw_f_fdisk: (pdrv: number, ptblLow: number, ptblHigh: number, work: number) => number;
+    ffw_set_vol_to_part: (vol: number, pd: number, pt: number) => void;
+    ffw_reset_vol_to_part: () => void;
+    sizeof_FATFS: () => number;
+    sizeof_FIL: () => number;
+    sizeof_DIR: () => number;
+    sizeof_FILINFO: () => number;
+    offset_FATFS_csize: () => number;
+    offset_FILINFO_fattrib: () => number;
+    offset_FILINFO_altname: () => number;
+    offset_FILINFO_fname: () => number;
+    sizeof_TCHAR: () => number;
 }
 
 type HeapScope = {
@@ -282,17 +355,19 @@ class FatFsObject {
      * Sectors per cluster
      */
     get cSize(): number {
-        return this.#context.view.getUint16(this.#fatFsPtr + OFFSET_FATFS_CSIZE, true);
+        return this.#context.view.getUint16(this.#fatFsPtr + this.#context.layout.offsetFatfsCsize, true);
     }
 }
 
 class FatFsMemoryContext {
     #memory: WebAssembly.Memory;
     #exports: FatFsExports;
+    #layout: NativeLayout;
 
-    constructor(memory: WebAssembly.Memory, exports: FatFsExports) {
+    constructor(memory: WebAssembly.Memory, exports: FatFsExports, layout: NativeLayout) {
         this.#memory = memory;
         this.#exports = exports;
+        this.#layout = layout;
     }
 
     get heap() {
@@ -301,6 +376,10 @@ class FatFsMemoryContext {
 
     get view() {
         return new DataView(this.#memory.buffer);
+    }
+
+    get layout() {
+        return this.#layout;
     }
 
     allocString(text: string | null): number {
@@ -379,23 +458,24 @@ export class FatFsFileInfo {
      * Creates a {@link FatFsFileInfo} from a packed FILINFO data structure returned from a FatFS function 
      * @data Packed FILINFO structure bytes
      */
-    static fromFilInfo(data: Uint8Array): FatFsFileInfo {
+    static fromFilInfo(data: Uint8Array, layout: NativeLayout): FatFsFileInfo {
         const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-        const size = view.getUint32(0, true);
+        const size = layout.lbaSize === 8
+            ? getUint64Number(view, 0)
+            : view.getUint32(0, true);
 
-        const encodedDate = view.getUint16(4, true);
+        const encodedDate = view.getUint16(layout.lbaSize, true);
         const year = 1980 + ((encodedDate & 0xFE00) >> 9);
         const month = ((encodedDate & 0x01E0) >> 5) - 1;
         const day = encodedDate & 0x001F;
-        const encodedTime = view.getUint16(6, true);
+        const encodedTime = view.getUint16(layout.lbaSize + 2, true);
         const hour = (encodedTime & 0xF800) >> 11;
         const minute = (encodedTime & 0x07E0) >> 5;
         const second = (encodedTime & 0x001F) * 2;
         const date = new Date(year, month, day, hour, minute, second);
         
-        const attrib = data[8];
-
-        const nameArray = data.subarray(9, 22);
+        const attrib = data[layout.offsetFilinfoFattrib];
+        const nameArray = data.subarray(layout.offsetFilinfoFname, layout.sizeFilinfo);
         const zeroIndex = nameArray.indexOf(0);
         const nameTrimmed = zeroIndex >= 0
             ? nameArray.subarray(0, zeroIndex)
@@ -545,9 +625,10 @@ export class FatFsFile {
      *     QWORD(64-bit) depends on the configuration option FF_FS_EXFAT.
      */
     lseek(ofs: number): void {
+        const [ofsLow, ofsHigh] = splitUint64(ofs);
         throwIfError(
             "seeking",
-            () => this.#exports.f_lseek(this.#filePtr, ofs)
+            () => this.#exports.ffw_f_lseek(this.#filePtr, ofsLow, ofsHigh)
         );
     }
 
@@ -575,54 +656,11 @@ export class FatFsFile {
      * @param opt Allocation mode. Prepare to allocate (0) or Allocate now (1).
      */
     expand(fsz: number, opt: number): void {
+        const [fszLow, fszHigh] = splitUint64(fsz);
         throwIfError(
             "expanding file",
-            () => this.#exports.f_expand(this.#filePtr, fsz, opt)
+            () => this.#exports.ffw_f_expand(this.#filePtr, fszLow, fszHigh, opt)
         );
-    }
-
-    /**
-     * The f_gets reads a string from the file.
-     * @returns the string
-     */
-    gets(maxSize: number): string {
-        return this.#context.enterScope(scope => {
-            const buffPtr = scope.alloc(maxSize + 1);
-            throwIfError(
-                "reading string from file",
-                () => this.#exports.f_gets(buffPtr, maxSize, this.#filePtr)
-            );
-            return this.#context.decodeString(buffPtr, maxSize + 1);
-        });
-    }
-
-    /**
-     * The f_putc function puts a character to the file.
-     * @param chr A code unit to write.
-     * @returns When the character was written successfuly, it returns number 
-     *     of character encoding units written to the file. When the function 
-     *     failed due to disk full or any error, a negative value will be returned.
-     */
-    putc(chr: number): number {
-        const chrCode = chr % 256;
-        return this.#exports.f_putc(chrCode, this.#filePtr);
-    }
-
-    /**
-     * The f_puts function writes a string to the file.
-     * @param str Pointer to the null terminated string to be written. The 
-     *     terminator character will not be written.
-     * @returns When the string was written successfuly, it returns number 
-     *     of character encoding units written to the file. When the function 
-     *     failed due to disk full or any error, a negative value will be 
-     *     returned.
-     */
-    puts(str: string): number {
-        const f_puts = this.#exports.f_puts as (str: number, fp: number) => number;
-        return this.#context.enterScope(scope => {
-            const strPtr = scope.allocString(str);
-            return f_puts(strPtr, this.#filePtr);
-        });
     }
 
     /**
@@ -630,7 +668,8 @@ export class FatFsFile {
      * @returns Returns current read/write pointer of the file.
      */
     tell(): number {
-        return this.#exports.f_tell(this.#filePtr);
+        return this.#exports.ffw_f_tell_low(this.#filePtr)
+            + (this.#exports.ffw_f_tell_high(this.#filePtr) * UINT32_SIZE);
     }
 
     /**
@@ -640,7 +679,7 @@ export class FatFsFile {
      *     returns a zero.
      */
     eof(fp: FatFsFile): number {
-        return this.#exports.f_eof(this.#filePtr);
+        return this.tell() >= this.size() ? 1 : 0;
     }
 
     /**
@@ -648,7 +687,8 @@ export class FatFsFile {
      * @returns Returns the size of the file in unit of byte.
      */
     size(): number {
-        return this.#exports.f_size(this.#filePtr);
+        return this.#exports.ffw_f_size_low(this.#filePtr)
+            + (this.#exports.ffw_f_size_high(this.#filePtr) * UINT32_SIZE);
     }
 
     /**
@@ -657,7 +697,7 @@ export class FatFsFile {
      *     otherwise it returns a zero.
      */
     error(fp: FatFsFile): number {
-        return this.#exports.f_error(this.#filePtr);
+        return 0;
     }
 
 }
@@ -697,13 +737,13 @@ export class FatFsDir {
      */
     read(): FatFsFileInfo {
         return this.#context.enterScope(scope => {
-            const fno = scope.alloc(SIZE_FILINFO);
+            const fno = scope.alloc(this.#context.layout.sizeFilinfo);
             throwIfError(
                 "reading directory",
                 () => this.#exports.f_readdir(this.#dirPtr, fno)
             );
-            const fnoData = this.#context.heap.subarray(fno, fno + SIZE_FILINFO);
-            return FatFsFileInfo.fromFilInfo(fnoData);
+            const fnoData = this.#context.heap.subarray(fno, fno + this.#context.layout.sizeFilinfo);
+            return FatFsFileInfo.fromFilInfo(fnoData, this.#context.layout);
         });
     }
 
@@ -722,13 +762,13 @@ export class FatFsDir {
      */
     findNext(): FatFsFileInfo {
         return this.#context.enterScope(scope => {
-            const fno = scope.alloc(SIZE_FILINFO);
+            const fno = scope.alloc(this.#context.layout.sizeFilinfo);
             throwIfError(
                 "searching directory for next match",
                 () => this.#exports.f_findnext(this.#dirPtr, fno)
             );
-            const fnoData = this.#context.heap.subarray(fno, fno + SIZE_FILINFO);
-            return FatFsFileInfo.fromFilInfo(fnoData);
+            const fnoData = this.#context.heap.subarray(fno, fno + this.#context.layout.sizeFilinfo);
+            return FatFsFileInfo.fromFilInfo(fnoData, this.#context.layout);
         });
     }
 
@@ -746,12 +786,12 @@ export class FatFsDir {
 export type FatFsDiskOptions = {
     /** The size of the filesystem disk sectors, in bytes. Uses 512 if not provided. */
     sectorSize?: number; 
-    /** Whether or not to enable multi-partition disks, which enables {@link FatFsDiskPartitionable.fdisk} */
-    multiPartition?: boolean; 
+    /** Use the exFAT/GPT-capable WASM build. The default build supports FAT on MBR/SFD media. */
+    exfat?: boolean; 
 }
 
 const FATFS_DISK_OPTION_DEFAULTS: Required<FatFsDiskOptions> = {
-    multiPartition: false,
+    exfat: false,
     sectorSize: DEFAULT_SECTOR_SIZE
 }
 
@@ -766,15 +806,7 @@ export class FatFsDisk {
      * @overload
      * Create a new {@link FatFsDisk}.
      * @param disk Array of bytes containing a FAT image (or anything if you would like to format)
-     * @param options Additional options. See {@link FatFsDiskOptions} for more information. Will return a {@link FatFsDiskPartitionable} if the `multiPartition` option is true.
-     */
-    static async create(disk: Uint8Array, options: FatFsDiskOptions & { multiPartition: true }): Promise<FatFsDiskPartitionable>;
-
-    /** 
-     * @overload
-     * Create a new {@link FatFsDisk}.
-     * @param disk Array of bytes containing a FAT image (or anything if you would like to format)
-     * @param options Additional options. See {@link FatFsDiskOptions} for more information. Will return a {@link FatFsDiskPartitionable} if the `multiPartition` option is true.
+     * @param options Additional options. See {@link FatFsDiskOptions} for more information.
      */
     static async create(disk: Uint8Array, options: FatFsDiskOptions): Promise<FatFsDisk>;
 
@@ -787,13 +819,24 @@ export class FatFsDisk {
     static async create(disk: Uint8Array, options?: FatFsDiskOptions): Promise<FatFsDisk> {
         const memory = new WebAssembly.Memory({ initial: 8 });
         const validOptions = { ...FATFS_DISK_OPTION_DEFAULTS, ...(options ?? {}) };
-        const importObject = createImportObject(memory, disk, validOptions.sectorSize);
+        const importObject = createImportObject(memory, disk, validOptions.sectorSize, validOptions.exfat ? 8 : 4);
         const source = await getWasm(importObject, validOptions);
         const exports = source.instance.exports as FatFsExports;
-        const context = new FatFsMemoryContext(memory, exports);
-        return validOptions.multiPartition
-            ? new FatFsDiskPartitionable(context, exports)
-            : new FatFsDisk(context, exports);
+        const layout: NativeLayout = {
+            sizeFatfs: exports.sizeof_FATFS(),
+            sizeFil: exports.sizeof_FIL(),
+            sizeDir: exports.sizeof_DIR(),
+            sizeFilinfo: exports.sizeof_FILINFO(),
+            offsetFatfsCsize: exports.offset_FATFS_csize(),
+            offsetFilinfoFattrib: exports.offset_FILINFO_fattrib(),
+            offsetFilinfoAltname: exports.offset_FILINFO_altname(),
+            offsetFilinfoFname: exports.offset_FILINFO_fname(),
+            tcharSize: exports.sizeof_TCHAR(),
+            lbaSize: validOptions.exfat ? 8 : 4
+        };
+        const context = new FatFsMemoryContext(memory, exports, layout);
+        exports.ffw_reset_vol_to_part();
+        return new FatFsDisk(context, exports);
     }
 
     /** 
@@ -819,17 +862,23 @@ export class FatFsDisk {
             if (typeof opt !== 'undefined' && opt !== null) {
                 optPtr = scope.alloc(16);
                 const view = this.#context.view;
-                view.setUint8(optPtr, opt?.fmt ?? 0);
+                view.setUint8(optPtr, opt?.fmt ?? FatFsFormat.ANY);
                 view.setUint8(optPtr + 1, opt?.nFat ?? 0);
-                view.setUint32(optPtr + 2, opt?.align ?? 0, true);
-                view.setUint32(optPtr + 6, opt?.nRoot ?? 0, true);
-                view.setUint32(optPtr + 10, opt?.auSize ?? 0, true);
+                view.setUint32(optPtr + 4, opt?.align ?? 0, true);
+                view.setUint32(optPtr + 8, opt?.nRoot ?? 0, true);
+                view.setUint32(optPtr + 12, opt?.auSize ?? 0, true);
             }
             const workAreaPtr = scope.alloc(4096);
-            throwIfError(
-                "formatting disk",
-                () => this.#exports.f_mkfs(pathPtr, optPtr, workAreaPtr, 4096)
-            ) 
+            const format = () => this.#exports.f_mkfs(pathPtr, optPtr, workAreaPtr, 4096);
+            let result = format();
+            if (result === FatFsResult.MKFS_ABORTED && (opt?.path ?? '') === '') {
+                this.#exports.ffw_set_vol_to_part(0, 0, 1);
+                result = format();
+                if (result !== FatFsResult.OK)
+                    this.#exports.ffw_reset_vol_to_part();
+            }
+            if (result !== FatFsResult.OK)
+                throw new FatFsError("formatting disk", result);
         });
     }
 
@@ -846,8 +895,8 @@ export class FatFsDisk {
     mount(path?: string, opt?: number): FatFsObject {
         const malloc = (size: number) => this.#context.alloc(size);
         return this.#context.enterScope(scope => {
-            const fsPtr = malloc(SIZE_FATFS_OBJ);
-            for (let i = 0; i < SIZE_FATFS_OBJ; i++)
+            const fsPtr = malloc(this.#context.layout.sizeFatfs);
+            for (let i = 0; i < this.#context.layout.sizeFatfs; i++)
                 this.#context.heap[fsPtr + i] = 0;
             const pathPtr = scope.allocString(path ?? '');
             throwIfError(
@@ -892,7 +941,7 @@ export class FatFsDisk {
     open(path: string, mode: FatFsMode): FatFsFile {
         return this.#context.enterScope(scope => {
             const pathPtr = scope.allocString(path);
-            const fpPtr = this.#context.alloc(576);
+            const fpPtr = this.#context.alloc(this.#context.layout.sizeFil);
             throwIfError(
                 "opening file",
                 () => this.#exports.f_open(fpPtr, pathPtr, mode),
@@ -957,7 +1006,7 @@ export class FatFsDisk {
     openDir(path: string): FatFsDir {
         return this.#context.enterScope(scope => {
             const pathPtr = scope.allocString(path);
-            const dpPtr = this.#context.alloc(SIZE_DIR);
+            const dpPtr = this.#context.alloc(this.#context.layout.sizeDir);
             throwIfError(
                 "opening directory",
                 () => this.#exports.f_opendir(dpPtr, pathPtr),
@@ -977,16 +1026,16 @@ export class FatFsDisk {
         return this.#context.enterScope(scope => {
             const pathPtr = scope.allocString(path);
             const patternPtr = scope.allocString(pattern);
-            const fno = scope.alloc(SIZE_FILINFO);
-            const dpPtr = this.#context.alloc(SIZE_DIR);
+            const fno = scope.alloc(this.#context.layout.sizeFilinfo);
+            const dpPtr = this.#context.alloc(this.#context.layout.sizeDir);
             throwIfError(
                 "searching directory",
                 () => this.#exports.f_findfirst(dpPtr, fno, pathPtr, patternPtr),
             );
-            const fnoData = this.#context.heap.subarray(fno, fno + SIZE_FILINFO);
+            const fnoData = this.#context.heap.subarray(fno, fno + this.#context.layout.sizeFilinfo);
             return [
                 new FatFsDir(dpPtr, this.#exports, this.#context),
-                FatFsFileInfo.fromFilInfo(fnoData)
+                FatFsFileInfo.fromFilInfo(fnoData, this.#context.layout)
             ];
         });
     }
@@ -1018,13 +1067,13 @@ export class FatFsDisk {
     stat(path: string): FatFsFileInfo {
         return this.#context.enterScope(scope => {
             const pathPtr = scope.allocString(path);
-            const fno = scope.alloc(SIZE_FILINFO);
+            const fno = scope.alloc(this.#context.layout.sizeFilinfo);
             throwIfError(
                 "getting file information",
                 () => this.#exports.f_stat(pathPtr, fno)
             );
-            const fnoData = this.#context.heap.subarray(fno, fno + SIZE_FILINFO);
-            return FatFsFileInfo.fromFilInfo(fnoData);
+            const fnoData = this.#context.heap.subarray(fno, fno + this.#context.layout.sizeFilinfo);
+            return FatFsFileInfo.fromFilInfo(fnoData, this.#context.layout);
         });
     }
 
@@ -1098,20 +1147,20 @@ export class FatFsDisk {
     utime(path: string, time: Date): void {
         this.#context.enterScope(scope => {
             const pathPtr = scope.allocString(path);
-            const fno = scope.alloc(24);
+            const fno = scope.alloc(this.#context.layout.sizeFilinfo);
 
             // set date and time only, doesn't care about other entries
             const year = (time.getFullYear() - 1980) & 0x7F;
             const month = time.getMonth() + 1;
             const day = time.getDay();
             const encodedDate = (year << 9) | (month << 5) | day;
-            this.#context.view.setUint16(fno + 4, encodedDate, true);
+            this.#context.view.setUint16(fno + this.#context.layout.lbaSize, encodedDate, true);
     
             const hour = time.getHours()
             const minute = time.getMinutes();
             const seconds = time.getSeconds() >>> 1;
             const encodedTime = (hour << 11) | (minute << 5) | seconds;
-            this.#context.view.setUint16(fno + 6, encodedTime, true);
+            this.#context.view.setUint16(fno + this.#context.layout.lbaSize + 2, encodedTime, true);
         
             throwIfError(
                 "changing timestamp of file or directory",
@@ -1246,56 +1295,34 @@ export class FatFsDisk {
     }
 
     /**
-     * The f_setcp function sets the active code page.
-     * @param cp OEM code page to be used for the path name.
-     */
-    setCP(cp: number): void {
-        const f_setcp = this.#exports.f_setcp as (cp: number) => number;
-        throwIfError(
-            "setting active code page",
-            () => f_setcp(cp)
-        );
-    }
-}
-
-/**
- * Extension of {@link FatFsDisk} with extensions for partitioning a FAT drive with up to 4 partitions.
- * 
- * If multi-partition support is enabled, accessing some types of FAT disks (e.g. floppes) may not work correctly.
- */
-export class FatFsDiskPartitionable extends FatFsDisk {
-    #context: FatFsMemoryContext;
-    #exports: FatFsExports;
-
-    /**
-     * Private constructor. Use {@link FatFsDisk.create} with the `multiPartition` option set to true to create a {@link FatFsDiskPartitionable}. 
-     */
-    constructor(
-        context: FatFsMemoryContext,
-        exports: FatFsExports,
-    ) {
-        super(context, exports);
-        this.#context = context;
-        this.#exports = exports;
-    }
-
-    /**
-     * The f_fdisk function divides a physical drive.
+     * The f_fdisk function divides the in-memory physical drive.
      * @param ptbl List of partition size to create on the drive.
-     * @param pdrv Specifies the physical drive to be divided. This is not the 
-     *     logical drive number but the drive identifier passed to the low 
-     *     level disk functions.
      */
-    fdisk(ptbl: number[], pdrv?: number): void {
+    fdisk(ptbl: number[]): void {
         this.#context.enterScope(scope => {
             const workAreaPtr = scope.alloc(FF_MAX_SS);
-            const ptblPtr = scope.alloc(ptbl.length * 4);
-            for (let i = 0; i < ptbl.length; i++)
-                this.#context.view.setUint32(ptblPtr + (i * 4), ptbl[i]);
+            const entries = Math.min(ptbl.length, 4);
+            const ptblLowPtr = scope.alloc(5 * 4);
+            const ptblHighPtr = scope.alloc(5 * 4);
+            for (let i = 0; i < 5; i++) {
+                this.#context.view.setUint32(ptblLowPtr + (i * 4), 0, true);
+                this.#context.view.setUint32(ptblHighPtr + (i * 4), 0, true);
+            }
+            for (let i = 0; i < entries; i++) {
+                const [low, high] = splitUint64(ptbl[i]);
+                this.#context.view.setUint32(ptblLowPtr + (i * 4), low, true);
+                this.#context.view.setUint32(ptblHighPtr + (i * 4), high, true);
+            }
             throwIfError(
                 "partitioning disk",
-                () => this.#exports.f_fdisk(pdrv ?? 0, ptblPtr, workAreaPtr)
+                () => this.#exports.ffw_f_fdisk(0, ptblLowPtr, ptblHighPtr, workAreaPtr)
             );
+            for (let i = 0; i < 4; i++) {
+                if (i < entries && ptbl[i] > 0)
+                    this.#exports.ffw_set_vol_to_part(i, 0, i + 1);
+                else
+                    this.#exports.ffw_set_vol_to_part(i, 1, 0);
+            }
         });
     }
 }

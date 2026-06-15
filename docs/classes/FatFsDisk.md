@@ -4,12 +4,6 @@
 
 Represents a FAT filesystem over an array of bytes
 
-## Hierarchy
-
-- **`FatFsDisk`**
-
-  ↳ [`FatFsDiskPartitionable`](FatFsDiskPartitionable.md)
-
 ## Table of contents
 
 ### Constructors
@@ -26,6 +20,7 @@ Represents a FAT filesystem over an array of bytes
 - [chdir](FatFsDisk.md#chdir)
 - [chdrive](FatFsDisk.md#chdrive)
 - [chmod](FatFsDisk.md#chmod)
+- [fdisk](FatFsDisk.md#fdisk)
 - [find](FatFsDisk.md#find)
 - [findFirst](FatFsDisk.md#findfirst)
 - [getFree](FatFsDisk.md#getfree)
@@ -39,7 +34,6 @@ Represents a FAT filesystem over an array of bytes
 - [readFile](FatFsDisk.md#readfile)
 - [rename](FatFsDisk.md#rename)
 - [session](FatFsDisk.md#session)
-- [setCP](FatFsDisk.md#setcp)
 - [setLabel](FatFsDisk.md#setlabel)
 - [stat](FatFsDisk.md#stat)
 - [unlink](FatFsDisk.md#unlink)
@@ -65,7 +59,7 @@ Private constructor. Use [create](FatFsDisk.md#create) to create a [FatFsDisk](F
 
 #### Defined in
 
-[src/fatfs.ts:808](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L808)
+[src/fatfs.ts:845](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L845)
 
 ## Properties
 
@@ -75,7 +69,7 @@ Private constructor. Use [create](FatFsDisk.md#create) to create a [FatFsDisk](F
 
 #### Defined in
 
-[src/fatfs.ts:768](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L768)
+[src/fatfs.ts:802](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L802)
 
 ___
 
@@ -85,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/fatfs.ts:769](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L769)
+[src/fatfs.ts:803](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L803)
 
 ## Methods
 
@@ -107,7 +101,7 @@ The f_chdir function changes the current directory of the logical drive.
 
 #### Defined in
 
-[src/fatfs.ts:1150](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1150)
+[src/fatfs.ts:1193](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1193)
 
 ___
 
@@ -129,7 +123,7 @@ The f_chdrive function changes the current drive.
 
 #### Defined in
 
-[src/fatfs.ts:1165](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1165)
+[src/fatfs.ts:1208](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1208)
 
 ___
 
@@ -155,13 +149,35 @@ OK or error code
 
 #### Defined in
 
-[src/fatfs.ts:1085](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1085)
+[src/fatfs.ts:1128](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1128)
+
+___
+
+### fdisk
+
+▸ **fdisk**(`ptbl`): `void`
+
+The f_fdisk function divides the in-memory physical drive.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ptbl` | `number`[] | List of partition size to create on the drive. |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[src/fatfs.ts:1301](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1301)
 
 ___
 
 ### find
 
-▸ **find**(`path`, `pattern`): `IterableIterator`<[`FatFsFileInfo`](FatFsFileInfo.md)\>
+▸ **find**(`path`, `pattern`): `IterableIterator`\<[`FatFsFileInfo`](FatFsFileInfo.md)\>
 
 Searches a directory
 
@@ -174,13 +190,13 @@ Searches a directory
 
 #### Returns
 
-`IterableIterator`<[`FatFsFileInfo`](FatFsFileInfo.md)\>
+`IterableIterator`\<[`FatFsFileInfo`](FatFsFileInfo.md)\>
 
 An iterator to the search results
 
 #### Defined in
 
-[src/fatfs.ts:1007](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1007)
+[src/fatfs.ts:1050](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1050)
 
 ___
 
@@ -205,7 +221,7 @@ The directory, and the first matching entry
 
 #### Defined in
 
-[src/fatfs.ts:982](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L982)
+[src/fatfs.ts:1025](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1025)
 
 ___
 
@@ -228,7 +244,7 @@ tuple with the number of free clusters, and a FATFS
 
 #### Defined in
 
-[src/fatfs.ts:1198](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1198)
+[src/fatfs.ts:1241](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1241)
 
 ___
 
@@ -254,7 +270,7 @@ tuple containing the result, the volume label, and the volume
 
 #### Defined in
 
-[src/fatfs.ts:1222](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1222)
+[src/fatfs.ts:1265](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1265)
 
 ___
 
@@ -273,7 +289,7 @@ The current directory.
 
 #### Defined in
 
-[src/fatfs.ts:1180](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1180)
+[src/fatfs.ts:1223](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1223)
 
 ___
 
@@ -295,7 +311,7 @@ The f_mkdir function creates a new directory.
 
 #### Defined in
 
-[src/fatfs.ts:1134](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1134)
+[src/fatfs.ts:1177](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1177)
 
 ___
 
@@ -319,7 +335,7 @@ OK or error code
 
 #### Defined in
 
-[src/fatfs.ts:821](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L821)
+[src/fatfs.ts:858](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L858)
 
 ___
 
@@ -344,7 +360,7 @@ reference to the mounted work area
 
 #### Defined in
 
-[src/fatfs.ts:852](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L852)
+[src/fatfs.ts:895](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L895)
 
 ___
 
@@ -369,7 +385,7 @@ File object
 
 #### Defined in
 
-[src/fatfs.ts:898](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L898)
+[src/fatfs.ts:941](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L941)
 
 ___
 
@@ -393,7 +409,7 @@ Directory object
 
 #### Defined in
 
-[src/fatfs.ts:963](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L963)
+[src/fatfs.ts:1006](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1006)
 
 ___
 
@@ -417,7 +433,7 @@ The contents of the file
 
 #### Defined in
 
-[src/fatfs.ts:931](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L931)
+[src/fatfs.ts:974](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L974)
 
 ___
 
@@ -442,13 +458,13 @@ OK or error code
 
 #### Defined in
 
-[src/fatfs.ts:1063](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1063)
+[src/fatfs.ts:1106](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1106)
 
 ___
 
 ### session
 
-▸ **session**<`T`\>(`action`, `path?`): `ReturnType`<`T`\>
+▸ **session**\<`T`\>(`action`, `path?`): `ReturnType`\<`T`\>
 
 Mounts the filesystem, executes a user function, and unmounts
 
@@ -467,33 +483,11 @@ Mounts the filesystem, executes a user function, and unmounts
 
 #### Returns
 
-`ReturnType`<`T`\>
+`ReturnType`\<`T`\>
 
 #### Defined in
 
-[src/fatfs.ts:917](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L917)
-
-___
-
-### setCP
-
-▸ **setCP**(`cp`): `void`
-
-The f_setcp function sets the active code page.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `cp` | `number` | OEM code page to be used for the path name. |
-
-#### Returns
-
-`void`
-
-#### Defined in
-
-[src/fatfs.ts:1258](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1258)
+[src/fatfs.ts:960](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L960)
 
 ___
 
@@ -515,7 +509,7 @@ The f_setlabel function sets/removes the label of a volume.
 
 #### Defined in
 
-[src/fatfs.ts:1244](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1244)
+[src/fatfs.ts:1287](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1287)
 
 ___
 
@@ -539,7 +533,7 @@ OK or error code
 
 #### Defined in
 
-[src/fatfs.ts:1024](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1024)
+[src/fatfs.ts:1067](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1067)
 
 ___
 
@@ -561,7 +555,7 @@ The f_unlink function removes a file or sub-directory from the volume.
 
 #### Defined in
 
-[src/fatfs.ts:1042](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1042)
+[src/fatfs.ts:1085](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1085)
 
 ___
 
@@ -583,7 +577,7 @@ Unregisters the filesystem object
 
 #### Defined in
 
-[src/fatfs.ts:874](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L874)
+[src/fatfs.ts:917](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L917)
 
 ___
 
@@ -608,7 +602,7 @@ OK or error code
 
 #### Defined in
 
-[src/fatfs.ts:1104](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L1104)
+[src/fatfs.ts:1147](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L1147)
 
 ___
 
@@ -631,13 +625,13 @@ Write an entire file.
 
 #### Defined in
 
-[src/fatfs.ts:948](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L948)
+[src/fatfs.ts:991](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L991)
 
 ___
 
 ### create
 
-▸ `Static` **create**(`disk`, `options`): `Promise`<[`FatFsDiskPartitionable`](FatFsDiskPartitionable.md)\>
+▸ `Static` **create**(`disk`, `options`): `Promise`\<[`FatFsDisk`](FatFsDisk.md)\>
 
 Create a new [FatFsDisk](FatFsDisk.md).
 
@@ -646,36 +640,17 @@ Create a new [FatFsDisk](FatFsDisk.md).
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `disk` | `Uint8Array` | Array of bytes containing a FAT image (or anything if you would like to format) |
-| `options` | [`FatFsDiskOptions`](../modules.md#fatfsdiskoptions) & { `multiPartition`: ``true``  } | Additional options. See [FatFsDiskOptions](../modules.md#fatfsdiskoptions) for more information. Will return a [FatFsDiskPartitionable](FatFsDiskPartitionable.md) if the `multiPartition` option is true. |
+| `options` | [`FatFsDiskOptions`](../modules.md#fatfsdiskoptions) | Additional options. See [FatFsDiskOptions](../modules.md#fatfsdiskoptions) for more information. |
 
 #### Returns
 
-`Promise`<[`FatFsDiskPartitionable`](FatFsDiskPartitionable.md)\>
+`Promise`\<[`FatFsDisk`](FatFsDisk.md)\>
 
 #### Defined in
 
-[src/fatfs.ts:777](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L777)
+[src/fatfs.ts:811](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L811)
 
-▸ `Static` **create**(`disk`, `options`): `Promise`<[`FatFsDisk`](FatFsDisk.md)\>
-
-Create a new [FatFsDisk](FatFsDisk.md).
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `disk` | `Uint8Array` | Array of bytes containing a FAT image (or anything if you would like to format) |
-| `options` | [`FatFsDiskOptions`](../modules.md#fatfsdiskoptions) | Additional options. See [FatFsDiskOptions](../modules.md#fatfsdiskoptions) for more information. Will return a [FatFsDiskPartitionable](FatFsDiskPartitionable.md) if the `multiPartition` option is true. |
-
-#### Returns
-
-`Promise`<[`FatFsDisk`](FatFsDisk.md)\>
-
-#### Defined in
-
-[src/fatfs.ts:785](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L785)
-
-▸ `Static` **create**(`disk`): `Promise`<[`FatFsDisk`](FatFsDisk.md)\>
+▸ `Static` **create**(`disk`): `Promise`\<[`FatFsDisk`](FatFsDisk.md)\>
 
 Create a new [FatFsDisk](FatFsDisk.md) with defaults
 
@@ -687,8 +662,8 @@ Create a new [FatFsDisk](FatFsDisk.md) with defaults
 
 #### Returns
 
-`Promise`<[`FatFsDisk`](FatFsDisk.md)\>
+`Promise`\<[`FatFsDisk`](FatFsDisk.md)\>
 
 #### Defined in
 
-[src/fatfs.ts:792](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L792)
+[src/fatfs.ts:818](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L818)

@@ -1,24 +1,51 @@
 import { describe, expect, test, beforeEach } from 'vitest'
-import { FatFsDisk, FatFsMode, FatFsAttrib, FatFsFormat } from '../src/fatfs';
+import { FatFsDisk, FatFsError, FatFsMode, FatFsAttrib, FatFsFormat, FatFsResult } from '../src/fatfs';
 import { readFile } from 'fs/promises';
 import path from 'path';
 
+function expectFatFsResult(action: () => void, result: FatFsResult, messagePart?: string): void {
+    try {
+        action();
+        throw new Error('Expected FatFsError');
+    } catch (err) {
+        expect(err).toBeInstanceOf(FatFsError);
+        expect((err as FatFsError).result).toBe(result);
+        if (messagePart)
+            expect((err as Error).message).toContain(messagePart);
+    }
+}
+
+async function createMountedFatDisk(size = 8 * 1024 * 1024): Promise<FatFsDisk> {
+    const disk = await FatFsDisk.create(new Uint8Array(size));
+    disk.mkfs({ fmt: FatFsFormat.FAT, path: '' });
+    disk.mount('', 1);
+    return disk;
+}
+
 describe('FatFs Disk Tests', () => {
     test('should partition without error', async () => {
-        const data = new Uint8Array(1<<16); // 8MB
-        const disk = await FatFsDisk.create(data, { multiPartition: true });
+        const data = new Uint8Array(16 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data);
         disk.fdisk([100]);
+    });
+
+    test('should format partition paths with default format options', async () => {
+        const data = new Uint8Array(24 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data);
+        disk.fdisk([50, 50]);
+        disk.mkfs({ path: '0:' });
+        disk.mkfs({ path: '1:' });
     });
 
     test('should format without error', async () => {
         const data = await readFile(path.join(__dirname, 'assets/emptyPartition.img'));
-        const disk = await FatFsDisk.create(new Uint8Array(data), { multiPartition: true });
+        const disk = await FatFsDisk.create(new Uint8Array(data));
         disk.mkfs();
     });
 
     test('should format using options without error', async () => {
         const data = await readFile(path.join(__dirname, 'assets/emptyPartition.img'));
-        const disk = await FatFsDisk.create(new Uint8Array(data), { multiPartition: true });
+        const disk = await FatFsDisk.create(new Uint8Array(data));
         disk.mkfs({
             fmt: FatFsFormat.FAT,
             nFat: 0, // default
@@ -35,6 +62,237 @@ describe('FatFs Disk Tests', () => {
         const disk = await FatFsDisk.create(new Uint8Array(data));
         const workspace = disk.mount('', 0);
         expect(workspace.ptr).not.toBe(0);
+    });
+
+    test('should create and iterate long UTF-8 filenames', async () => {
+        const data = new Uint8Array(8 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data);
+        disk.mkfs({ fmt: FatFsFormat.FAT, path: '' });
+        disk.mount('', 1);
+
+        const fileName = 'long filename with unicode-東京.txt';
+        const renamed = 'renamed long filename-東京.txt';
+        const content = new TextEncoder().encode('utf8-lfn-content');
+        const file = disk.open(fileName, FatFsMode.WRITE | FatFsMode.CREATE_NEW);
+        file.write(content);
+        file.close();
+
+        expect(disk.stat(fileName).name).toBe(fileName);
+        expect(new TextDecoder().decode(disk.readFile(fileName))).toBe('utf8-lfn-content');
+
+        disk.rename(fileName, renamed);
+        expect(disk.stat(renamed).name).toBe(renamed);
+        expect([...disk.openDir('')].map(entry => entry.name)).toContain(renamed);
+
+        const found = [...disk.find('', 'renamed*')].map(entry => entry.name);
+        expect(found).toContain(renamed);
+    });
+
+    test('should keep logical partitions isolated and reject uncreated drives', async () => {
+        const data = new Uint8Array(24 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data);
+        disk.fdisk([33, 33]);
+
+        disk.mkfs({ fmt: FatFsFormat.FAT, path: '0:' });
+        disk.mkfs({ fmt: FatFsFormat.FAT, path: '1:' });
+        disk.mount('0:', 1);
+        disk.mount('1:', 1);
+
+        disk.writeFile('0:/same.txt', new TextEncoder().encode('partition-zero'));
+        disk.writeFile('1:/same.txt', new TextEncoder().encode('partition-one'));
+
+        expect(new TextDecoder().decode(disk.readFile('0:/same.txt'))).toBe('partition-zero');
+        expect(new TextDecoder().decode(disk.readFile('1:/same.txt'))).toBe('partition-one');
+        expectFatFsResult(
+            () => disk.stat('3:/same.txt'),
+            FatFsResult.NOT_ENABLED,
+            'getting file information'
+        );
+    });
+
+    test('should update stale logical partition mappings after repartitioning', async () => {
+        const data = new Uint8Array(24 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data);
+        disk.fdisk([25, 25, 25, 25]);
+        disk.fdisk([50, 50]);
+
+        disk.mkfs({ fmt: FatFsFormat.FAT, path: '0:' });
+        disk.mkfs({ fmt: FatFsFormat.FAT, path: '1:' });
+        disk.mount('0:', 1);
+        disk.mount('1:', 1);
+
+        disk.writeFile('0:/zero.txt', new TextEncoder().encode('zero'));
+        disk.writeFile('1:/one.txt', new TextEncoder().encode('one'));
+
+        expectFatFsResult(
+            () => disk.mount('2:', 1),
+            FatFsResult.NOT_READY,
+            'mounting workspace'
+        );
+        expectFatFsResult(
+            () => disk.open('2:/stale.txt', FatFsMode.READ),
+            FatFsResult.NOT_READY,
+            'opening file'
+        );
+    });
+
+    test('should select the exFAT/GPT-capable build when requested', async () => {
+        const data = new Uint8Array(64 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data, { exfat: true });
+        disk.mkfs({ fmt: FatFsFormat.EXFAT, path: '' });
+        disk.mount('', 1);
+
+        const name = 'exfat long filename-東京.txt';
+        disk.writeFile(name, new TextEncoder().encode('exfat-data'));
+        expect(new TextDecoder().decode(disk.readFile(name))).toBe('exfat-data');
+        disk.rename(name, 'renamed exfat long filename-東京.txt');
+        expect(disk.stat('renamed exfat long filename-東京.txt').name).toBe('renamed exfat long filename-東京.txt');
+    });
+
+    test('should create and mount GPT partitions in the exFAT/GPT-capable build', async () => {
+        const data = new Uint8Array(24 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data, { exfat: true });
+        disk.fdisk([50, 50]);
+
+        const protectiveMbrType = data[512 - 66 + 4];
+        const gptSignature = new TextDecoder('ascii').decode(data.subarray(512, 520));
+        expect(protectiveMbrType).toBe(0xEE);
+        expect(gptSignature).toBe('EFI PART');
+
+        disk.mkfs({ fmt: FatFsFormat.FAT, path: '0:' });
+        disk.mount('0:', 1);
+        disk.writeFile('0:/gpt.txt', new TextEncoder().encode('gpt-data'));
+        expect(new TextDecoder().decode(disk.readFile('0:/gpt.txt'))).toBe('gpt-data');
+    });
+
+    test('should reject exFAT formatting in the FAT-only build', async () => {
+        const data = new Uint8Array(64 * 1024 * 1024);
+        const disk = await FatFsDisk.create(data);
+        expect(() => disk.mkfs({ fmt: FatFsFormat.EXFAT, path: '' })).toThrow(FatFsError);
+    });
+});
+
+describe('FatFs Additional API Coverage', () => {
+    test('should cover file positioning, sync, truncate, eof, and error helpers', async () => {
+        const disk = await createMountedFatDisk();
+        const file = disk.open('api.txt', FatFsMode.WRITE | FatFsMode.READ | FatFsMode.CREATE_ALWAYS);
+        const content = new TextEncoder().encode('line one\nline two!');
+
+        expect(file.write(content)).toBe(18);
+        expect(file.tell()).toBe(18);
+        expect(file.size()).toBe(18);
+        expect(file.eof(file)).not.toBe(0);
+        expect(file.error(file)).toBe(0);
+
+        file.sync();
+        file.lseek(5);
+        expect(file.tell()).toBe(5);
+        file.truncate();
+        expect(file.size()).toBe(5);
+
+        file.rewind();
+        const readBuffer = new Uint8Array(5);
+        expect(file.read(readBuffer)).toBe(5);
+        expect(new TextDecoder().decode(readBuffer)).toBe('line ');
+        expect(file.tell()).toBe(5);
+        file.close();
+
+        const expanded = disk.open('expanded.bin', FatFsMode.WRITE | FatFsMode.READ | FatFsMode.CREATE_ALWAYS);
+        expanded.expand(4096, 1);
+        expect(expanded.size()).toBe(4096);
+        expanded.close();
+    });
+
+    test('should cover disk session, unmount, cwd, free space, label, and timestamp APIs', async () => {
+        const disk = await createMountedFatDisk();
+
+        disk.mkdir('folder');
+        disk.chdir('folder');
+        expect(disk.getcwd()).toBe('0:/folder');
+        disk.chdir('/');
+        disk.chdrive('0:');
+        expect(disk.getcwd()).toBe('0:/');
+
+        disk.setLabel('FATFSAPI');
+        const [label, serial] = disk.getLabel();
+        expect(label).toBe('FATFSAPI');
+        expect(serial).toBeTypeOf('number');
+
+        const [freeClusters, fs] = disk.getFree();
+        expect(freeClusters).toBeGreaterThan(0);
+        expect(fs.ptr).not.toBe(0);
+        expect(fs.cSize).toBeGreaterThan(0);
+
+        disk.writeFile('dated.txt', new TextEncoder().encode('date'));
+        const timestamp = new Date(2024, 0, 1, 12, 34, 56);
+        disk.utime('dated.txt', timestamp);
+        expect(disk.stat('dated.txt').date).toStrictEqual(timestamp);
+
+        const sessionResult = disk.session(() => {
+            disk.writeFile('session.txt', new TextEncoder().encode('session-data'));
+            return new TextDecoder().decode(disk.readFile('session.txt'));
+        });
+        expect(sessionResult).toBe('session-data');
+        expectFatFsResult(
+            () => disk.stat('session.txt'),
+            FatFsResult.NOT_ENABLED,
+            'getting file information'
+        );
+
+        disk.mount('', 1);
+        expect(new TextDecoder().decode(disk.readFile('session.txt'))).toBe('session-data');
+        disk.unmount();
+        expectFatFsResult(
+            () => disk.stat('session.txt'),
+            FatFsResult.NOT_ENABLED,
+            'getting file information'
+        );
+    });
+
+    test('should cover directory rewind and close', async () => {
+        const disk = await createMountedFatDisk();
+        disk.mkdir('folder');
+        disk.writeFile('folder/a.txt', new TextEncoder().encode('a'));
+        disk.writeFile('folder/b.txt', new TextEncoder().encode('b'));
+
+        const dir = disk.openDir('folder');
+        expect(dir.dp).not.toBe(0);
+        expect(dir.read().name).toBe('a.txt');
+        expect(dir.read().name).toBe('b.txt');
+        dir.rewind();
+        expect(dir.read().name).toBe('a.txt');
+        dir.close();
+    });
+
+    test('should expose all file attribute helpers', async () => {
+        const disk = await createMountedFatDisk();
+        disk.writeFile('attrs.txt', new TextEncoder().encode('attrs'));
+        disk.chmod(
+            'attrs.txt',
+            FatFsAttrib.RDO | FatFsAttrib.HID | FatFsAttrib.SYS,
+            FatFsAttrib.RDO | FatFsAttrib.HID | FatFsAttrib.SYS
+        );
+
+        const fileInfo = disk.stat('attrs.txt');
+        expect(fileInfo.isReadOnly).toBe(true);
+        expect(fileInfo.isHidden).toBe(true);
+        expect(fileInfo.isSystem).toBe(true);
+        expect(fileInfo.isArchive).toBe(true);
+        expect(fileInfo.isDirectory).toBe(false);
+
+        disk.mkdir('attrdir');
+        const dirInfo = disk.stat('attrdir');
+        expect(dirInfo.isDirectory).toBe(true);
+        expect(dirInfo.isArchive).toBe(false);
+    });
+
+    test('should cover explicit null mkfs options and default FatFsDisk.create overload', async () => {
+        const disk = await FatFsDisk.create(new Uint8Array(8 * 1024 * 1024));
+        disk.mkfs(null);
+        const fs = disk.mount();
+        expect(fs.ptr).not.toBe(0);
+        disk.writeFile('default.txt', new TextEncoder().encode('default-create'));
+        expect(new TextDecoder().decode(disk.readFile('default.txt'))).toBe('default-create');
     });
 });
 
@@ -97,7 +355,7 @@ describe('FatFs File File Tests', () => {
         // check that it was actually renamed
         expect(() => disk.stat('test.txt')).toThrow();
         const fileInfo = disk.stat('nottest.txt');
-        expect(fileInfo.name).toBe('NOTTEST.TXT');
+        expect(fileInfo.name).toBe('nottest.txt');
     });
 
     test('should be able to change file permissions', () => {
@@ -141,7 +399,7 @@ describe('FatFs Empty Directory Tests', () => {
         file.close();
 
         const fileInfo = disk.stat('folder\\inside2.txt');
-        expect(fileInfo.name).toBe('INSIDE2.TXT');
+        expect(fileInfo.name).toBe('inside2.txt');
         expect(fileInfo.size).toBe(13);
     });
 

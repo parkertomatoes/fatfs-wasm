@@ -18,7 +18,6 @@ High-level interface for creating and accessing FAT images using the FatFS libra
 
 - [FatFsDir](classes/FatFsDir.md)
 - [FatFsDisk](classes/FatFsDisk.md)
-- [FatFsDiskPartitionable](classes/FatFsDiskPartitionable.md)
 - [FatFsError](classes/FatFsError.md)
 - [FatFsFile](classes/FatFsFile.md)
 - [FatFsFileInfo](classes/FatFsFileInfo.md)
@@ -40,12 +39,12 @@ Options for creating a [FatFsDisk](classes/FatFsDisk.md).
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `multiPartition?` | `boolean` | Whether or not to enable multi-partition disks, which enables [fdisk](classes/FatFsDiskPartitionable.md#fdisk) |
+| `exfat?` | `boolean` | Use the exFAT/GPT-capable WASM build. The default build supports FAT on MBR/SFD media. |
 | `sectorSize?` | `number` | The size of the filesystem disk sectors, in bytes. Uses 512 if not provided. |
 
 #### Defined in
 
-[src/fatfs.ts:752](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L752)
+[src/fatfs.ts:786](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L786)
 
 ___
 
@@ -68,4 +67,4 @@ Options provided to [mkfs](classes/FatFsDisk.md#mkfs)
 
 #### Defined in
 
-[src/fatfs.ts:260](https://github.com/parkertomatoes/fatfs-wasm/blob/b3504de/src/fatfs.ts#L260)
+[src/fatfs.ts:327](https://github.com/parkertomatoes/fatfs-wasm/blob/a167afd/src/fatfs.ts#L327)
