@@ -13,6 +13,8 @@ Limitations:
  * FAT volumes limited by the size of a Javascript ArrayBuffer, which is much less than exFAT limits.
  * Does not include FatFS's code page conversion capabilities
 
+See it in action [here](https://parkertomatoes.github.io/fatforge/index.html)
+
 ## Getting Started
 fatfs-wasm can be used from Node.js or the browser.
 
